@@ -80,6 +80,7 @@ export default function Header() {
             Témoignages
           </button>
           <button
+            onClick={() => scrollToSection("contact")}
             className={`transition-colors ${activeSection === "contact" ? "text-green-500 font-medium" : "text-gray-700 hover:text-green-500"}`}
           >
             Contact
@@ -88,7 +89,7 @@ export default function Header() {
 
         <div>
           <Link
-            href="/connexion"
+            href="/auth/login"
             className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600 transition-colors"
           >
             Connexion

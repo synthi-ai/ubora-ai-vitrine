@@ -26,7 +26,7 @@ export default function FeaturesSection() {
       <div className="relative w-full md:w-1/2 max-w-lg mx-auto mt-8 md:mt-0">
         {/* Image principale */}
         <div className="rounded-lg overflow-hidden shadow-lg">
-          <img src="/images/ocr.svg" alt="Laptop" className="w-full grayscale" />
+          <img src="/images/ocr.svg" alt="Laptop" className="w-400 h-250" />
         </div>
 
         {/* Annotation "Sélectionnez un document" */}

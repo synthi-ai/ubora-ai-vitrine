@@ -16,7 +16,7 @@ export default function HeroSection() {
             </h1>
             
                 {/* Chart visualization */}
-                <div className="relative h-16 mb-8">
+                <div className="relative h-16 mb-16">
                   <div className="absolute bottom-0 left-0 right-0 h-full">
                     <div className="relative h-full w-full">
                       <svg viewBox="0 0 100 40" preserveAspectRatio="none" className="w-full h-full">

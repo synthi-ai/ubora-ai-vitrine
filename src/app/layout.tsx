@@ -6,12 +6,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="fr">
       <body className="min-h-screen flex flex-col">
-        <Header />
+        {/*<Header />*/}
         <div className="pt-10"></div> 
         <main className="flex-grow">
           {children}
         </main>
-        <Footer />
+       {/*<Footer /> */}
       </body>
     </html>
   );
