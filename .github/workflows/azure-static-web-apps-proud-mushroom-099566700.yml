@@ -11,8 +11,8 @@ on:
 
 env:
   NODE_VERSION: '18'
-  SWA_WORKFLOW_TIMEOUT: '900' # Augmente le timeout à 15 minutes
-  SWA_MAX_FUNCTION_SIZE: '500000000' # Augmente la limite à ~500MB
+  SWA_WORKFLOW_TIMEOUT: '900'
+  SWA_MAX_FUNCTION_SIZE: '500000000'
 
 jobs:
   build_and_deploy_job:
@@ -23,32 +23,35 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: true
-          lfs: true # Active LFS pour les gros fichiers
-          fetch-depth: 0 # Récupère toute l'historique pour les sous-modules
+          lfs: true
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
+      
+      - name: Install Yarn
+        run: npm install -g yarn
 
       - name: Cache dependencies
         uses: actions/cache@v3
         with:
           path: |
             **/node_modules
+            **/.yarn/cache
             **/.next/cache
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-node-
+            ${{ runner.os }}-yarn-
 
-      - name: Install dependencies
+      - name: Install dependencies with Yarn
         run: |
-          npm ci
-          npm run build
+          yarn install --frozen-lockfile
+          yarn build
 
       - name: Clean up before deploy
         run: |
-          # Supprime les fichiers inutiles pour réduire la taille
           find . -type d -name "node_modules" -exec rm -rf {} + || true
           rm -rf .git .github .vscode tests e2e
 
@@ -60,11 +63,11 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: "/"
-          api_location: "api" # Si vous avez une API
-          output_location: ".next" # Pour Next.js
-          skip_app_build: true # Si vous avez déjà fait le build
-          skip_api_build: true # Si vous avez déjà fait le build API
-          verbose: true # Active les logs détaillés
+          api_location: "api"
+          output_location: ".next"
+          skip_app_build: true
+          skip_api_build: true
+          verbose: true
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
