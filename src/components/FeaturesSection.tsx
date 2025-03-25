@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 export default function FeaturesSection() {
   return (
     <section id="fonctionnalites" className="flex flex-col md:flex-row items-center justify-between px-6 md:px-16 py-12">
@@ -26,7 +28,7 @@ export default function FeaturesSection() {
       <div className="relative w-full md:w-1/2 max-w-lg mx-auto mt-8 md:mt-0">
         {/* Image principale */}
         <div className="rounded-lg overflow-hidden shadow-lg">
-          <img src="/images/ocr.svg" alt="Laptop" className="w-400 h-250" />
+          <Image src="/images/ocr.svg" alt="Laptop" width={364} height={315} className="w-full h-auto" />
         </div>
 
         {/* Annotation "Sélectionnez un document" */}
