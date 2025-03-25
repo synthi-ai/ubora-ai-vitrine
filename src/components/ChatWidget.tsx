@@ -19,7 +19,7 @@ return (
         </div>
         <div className="p-4 h-80 bg-gray-50 overflow-y-auto">
             <div className="bg-gray-200 rounded-lg p-3 mb-3 max-w-xs">
-                Bonjour! Comment puis-je vous aider aujourd'hui?
+                Bonjour! Comment puis-je vous aider aujourd&aposhui?
             </div>
         </div>
         <div className="p-3 border-t">

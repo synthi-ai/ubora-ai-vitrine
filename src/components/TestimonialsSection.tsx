@@ -84,7 +84,7 @@ export default function TestimonialCarousel() {
                       
                       return (
                         <div key={i} className="bg-white p-6">
-                          <p className="text-purple-600 font-bold text-lg mb-2">"{testimonial.quote}"</p>
+                          <p className="text-purple-600 font-bold text-lg mb-2">&quot;{testimonial.quote}&quot;</p>
                           <p className="text-gray-500 mb-6">{testimonial.text}</p>
                           <div className="flex items-center">
                             <div className="mr-4">
