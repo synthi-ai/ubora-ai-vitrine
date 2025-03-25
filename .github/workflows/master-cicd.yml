@@ -21,6 +21,12 @@ jobs:
           submodules: true
           lfs: false
 
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Optimize Dependencies
+        run: yarn install --production --frozen-lockfile
+
       - name: Build and Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -29,8 +35,8 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: "/" # Chemin d'accès au code source de l'application
-          api_location: "" # Chemin d'accès à l'API - optional
-          output_location: "" # Répertoire des fichiers construits - optional
+          api_location: ""   # Chemin d'accès à l'API - optionnel
+          output_location: "" # Répertoire des fichiers construits - optionnel
           skip_api_build: true # Ignorer la construction de l'API si déjà construite
 
   close_pull_request_job:
