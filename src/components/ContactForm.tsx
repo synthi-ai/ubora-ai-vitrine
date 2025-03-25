@@ -1,16 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
+import { useState, useEffect, useRef } from "react";
+import dynamic from 'next/dynamic';
 
-// Icône personnalisée pour le marqueur Leaflet
-const customIcon = new L.Icon({
-  iconUrl: "/images/icone.jpg", // Remplacez par l'icône de votre choix
-  iconSize: [32, 32],
-  iconAnchor: [16, 32],
-});
+// Dynamically import the Map component with no SSR
+const MapWithNoSSR = dynamic(
+  () => import('./MapComponent'),
+  { 
+    ssr: false,
+    loading: () => <div className="h-96 w-full flex items-center justify-center">Loading map...</div>
+  }
+);
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -30,8 +30,8 @@ export default function ContactForm() {
   };
 
   return (
-    <div id='contact'  className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-      {/* Formulaire */}
+    <div id="contact" className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+      {/* Form Section */}
       <div className="flex flex-col justify-center">
         <h2 className="text-3xl font-bold mb-4">Contactez-nous</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -80,7 +80,6 @@ export default function ContactForm() {
           </button>
         </form>
 
-        {/* Coordonnées */}
         <div className="mt-6 text-gray-700 space-y-2">
           <p>📞 Téléphone: <span className="font-semibold">+237 342 234</span></p>
           <p>📠 Fax: <span className="font-semibold">+237 342 234</span></p>
@@ -88,17 +87,9 @@ export default function ContactForm() {
         </div>
       </div>
 
-      {/* Carte */}
+      {/* Map Section */}
       <div className="h-96 w-full">
-        <MapContainer center={[3.139, 101.6869]} zoom={13} className="h-full w-full rounded-md">
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          />
-          <Marker position={[3.139, 101.6869]} icon={customIcon}>
-            <Popup>Notre emplacement</Popup>
-          </Marker>
-        </MapContainer>
+        <MapWithNoSSR />
       </div>
     </div>
   );
