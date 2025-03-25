@@ -10,7 +10,7 @@ on:
       - master
 
 env:
-  NODE_VERSION: '18'
+  NODE_VERSION: '22.x'
   SWA_WORKFLOW_TIMEOUT: '900'
   SWA_MAX_FUNCTION_SIZE: '500000000'
 
