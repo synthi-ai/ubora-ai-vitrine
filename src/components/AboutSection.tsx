@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Play } from "lucide-react";
+import Image from 'next/image';
 
 export default function AboutSection() {
   const [videoPlaying, setVideoPlaying] = useState(false);
@@ -16,11 +17,7 @@ export default function AboutSection() {
         <div className="relative w-full h-64 md:h-80 lg:h-96 mb-14 rounded-xl overflow-hidden">
           {!videoPlaying ? (
             <>
-              <img
-                src="/images/OCR.webp"
-                alt="Système de numérisation de documents"
-                className="w-full h-full object-cover rounded-xl brightness-75"
-              />
+              <Image src="/images/OCR.webp" alt="Système de numérisation de documents" width={624.94} height={558.98} className="w-full h-full object-cover rounded-xl brightness-75" />
               <button
                 onClick={playVideo}
                 className="absolute inset-0 m-auto w-16 h-16 bg-[#8cd139] rounded-full flex items-center justify-center hover:bg-[#79b830] transition-colors"

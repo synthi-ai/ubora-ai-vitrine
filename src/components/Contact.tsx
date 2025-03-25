@@ -1,17 +1,14 @@
-import dynamic from 'next/dynamic';
 import Head from 'next/head';
-
-// Import dynamique du composant ContactForm pour éviter les erreurs de SSR avec Leaflet
-const ContactFormWithNoSSR = dynamic(
-  () => import('../components/ContactForm'),
-  { ssr: false }
-);
+import ContactFormWrapper from './ContactFormWrapper';
 
 export default function Contact() {
   return (
     <>
+      <Head>
+        <title>Contact</title>
+      </Head>
       <main className="py-6">
-        <ContactFormWithNoSSR />
+        <ContactFormWrapper />
       </main>
     </>
   );
