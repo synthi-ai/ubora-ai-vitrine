@@ -2,17 +2,18 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Header() {
   const [activeSection, setActiveSection] = useState("accueil");
 
   // Fonction pour scroller vers une section
-  const scrollToSection = (id) => {
+  const scrollToSection = (id: string) => {
     const section = document.getElementById(id);
     if (section) {
       section.scrollIntoView({ behavior: "smooth" });
     } else {
-      window.scrollTo({ top: 0, behavior: "smooth" }); // Remonte en haut si "Accueil"
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -21,7 +22,7 @@ export default function Header() {
     const sections = ["accueil", "fonctionnalites", "tarifs", "temoignages", "contact"];
 
     const handleScroll = () => {
-      const scrollPosition = window.scrollY + 200; // Ajustement pour détecter la section
+      const scrollPosition = window.scrollY + 200;
 
       if (scrollPosition < 300) {
         setActiveSection("accueil");
@@ -45,43 +46,70 @@ export default function Header() {
   }, []);
 
   return (
-    <header  className="fixed top-0 left-0 right-0 bg-gray-50 py-4 shadow-md z-50">
-      <div className="container mx-auto px-4 flex justify-between items-center">
-        <div className="mb-4">
-          <h1 className="text-4xl font-bold">
-            <span className="text-purple-600">Ubora</span>
-            <span className="text-green-500">AI</span>
-          </h1>
+    <header className="fixed top-0 left-0 right-0 bg-gray-50 py-4 shadow-md z-50">
+      <div className="container mx-auto px-6 flex justify-between items-center">
+        <div className="flex items-center">
+          {/* Logo PNG UboraAI */}
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/ubora.png" 
+              alt="UboraAI Logo"
+              width={140} 
+              height={50} 
+              priority
+              className="hover:opacity-90 transition-opacity"
+            />
+          </Link>
         </div>
 
-        <nav className="hidden md:flex space-x-6">
+        <nav className="hidden md:flex space-x-8">
           <button
             onClick={() => scrollToSection("accueil")}
-            className={`transition-colors ${activeSection === "accueil" ? "text-green-500 font-medium" : "text-gray-700 hover:text-green-500"}`}
+            className={`text-lg transition-colors duration-300 ${
+              activeSection === "accueil" 
+                ? "text-green-600 font-semibold" 
+                : "text-gray-800 hover:text-green-500"
+            }`}
           >
             Accueil
           </button>
           <button
             onClick={() => scrollToSection("fonctionnalites")}
-            className={`transition-colors ${activeSection === "fonctionnalites" ? "text-green-500 font-medium" : "text-gray-700 hover:text-green-500"}`}
+            className={`text-lg transition-colors duration-300 ${
+              activeSection === "fonctionnalites" 
+                ? "text-green-600 font-semibold" 
+                : "text-gray-800 hover:text-green-500"
+            }`}
           >
             Fonctionnalités
           </button>
           <button
             onClick={() => scrollToSection("tarifs")}
-            className={`transition-colors ${activeSection === "tarifs" ? "text-green-500 font-medium" : "text-gray-700 hover:text-green-500"}`}
+            className={`text-lg transition-colors duration-300 ${
+              activeSection === "tarifs" 
+                ? "text-green-600 font-semibold" 
+                : "text-gray-800 hover:text-green-500"
+            }`}
           >
             Tarifs
           </button>
           <button
             onClick={() => scrollToSection("temoignages")}
-            className={`transition-colors ${activeSection === "temoignages" ? "text-green-500 font-medium" : "text-gray-700 hover:text-green-500"}`}
+            className={`text-lg transition-colors duration-300 ${
+              activeSection === "temoignages" 
+                ? "text-green-600 font-semibold" 
+                : "text-gray-800 hover:text-green-500"
+            }`}
           >
             Témoignages
           </button>
           <button
             onClick={() => scrollToSection("contact")}
-            className={`transition-colors ${activeSection === "contact" ? "text-green-500 font-medium" : "text-gray-700 hover:text-green-500"}`}
+            className={`text-lg transition-colors duration-300 ${
+              activeSection === "contact" 
+                ? "text-green-600 font-semibold" 
+                : "text-gray-800 hover:text-green-500"
+            }`}
           >
             Contact
           </button>
@@ -90,7 +118,7 @@ export default function Header() {
         <div>
           <Link
             href="/auth/login"
-            className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600 transition-colors"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full transition-colors duration-300 text-lg font-medium"
           >
             Connexion
           </Link>
