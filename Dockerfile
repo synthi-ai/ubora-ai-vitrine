@@ -1,13 +1,11 @@
 FROM node:21-alpine AS builder
-ENV NODE_ENV=development
 WORKDIR /app
 RUN apk add --no-cache libc6-compat curl ca-certificates
-COPY package.json yarn.lock ./
-RUN yarn config set network-timeout 300000 && \
-    yarn config set network-retry 3 && \
-    yarn install --frozen-lockfile
+COPY package.json package-lock.json* ./
+RUN npm ci --legacy-peer-deps
 COPY . .
-RUN yarn build 
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN npm run build
 
 FROM node:21-alpine AS runner
 ENV NODE_ENV=production
@@ -17,10 +15,10 @@ RUN addgroup --system --gid 1001 nodejs && \
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 COPY --from=builder /app/package.json ./
-COPY --from=builder /app/yarn.lock ./
-RUN yarn install --production --frozen-lockfile && yarn cache clean
+COPY --from=builder /app/package-lock.json* ./
+RUN npm ci --only=production --legacy-peer-deps && npm cache clean --force
 USER nextjs
 EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
-CMD ["yarn", "start"]
+CMD ["npm", "start"]
