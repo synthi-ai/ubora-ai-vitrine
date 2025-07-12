@@ -27,7 +27,7 @@ jobs:
         cache: 'yarn'  # Changed from 'npm' to 'yarn'
         
     - name: Install dependencies
-      run: yarn install --frozen-lockfile  # Changed from npm to yarn
+      run: yarn install --frozen-lockfile --ignore-engines  # Handle potential peer dependency issues
       
     - name: Run ESLint
       run: yarn lint  # Changed from npm to yarn
