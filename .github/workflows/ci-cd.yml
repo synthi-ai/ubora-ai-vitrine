@@ -24,22 +24,22 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '21'
-        cache: 'yarn'  # Changed from 'npm' to 'yarn'
+        cache: 'npm'
         
     - name: Install dependencies
-      run: yarn install --frozen-lockfile --ignore-engines  # Handle potential peer dependency issues
+      run:  npm install --legacy-peer-deps #npm ci
       
     - name: Run ESLint
-      run: yarn lint  # Changed from npm to yarn
+      run: npm run lint
       
    # - name: Run type checking
-   #  run: yarn type-check
+   #  run: npm run type-check
       
    # - name: Run tests
-   #   run: yarn test
+   #   run: npm run test
       
     - name: Build application
-      run: yarn build  # Changed from npm to yarn
+      run: npm run build
 
   build-and-push:
     needs: test
