@@ -1,241 +1,459 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, useInView } from 'framer-motion';
+import { Check, Star, Zap, Shield, Users, Crown, ArrowRight, Calculator, Clock, Globe } from 'lucide-react';
+import gsap from 'gsap';
 
-export default function PricingComponent() {
+const PricingComponent = () => {
   const [billingPeriod, setBillingPeriod] = useState('monthly');
+  const [selectedPlan, setSelectedPlan] = useState('professional');
+  const sectionRef = useRef<HTMLElement>(null);
+  const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
 
-  // Configuration des plans avec prix mensuels et annuels
+  // Enhanced pricing plans configuration
   const plans = {
     free: {
-      title: "Essai",
-      description: "Lorem ipsum dolor sit amet consectur adipis",
+      title: "Free Trial",
+      description: "Try UboraAI with no commitment and experience our powerful document processing",
       monthlyPrice: 0,
       annualPrice: 0,
+      savings: 0,
+      badge: "14 Days Free",
+      popular: false,
+      icon: Zap,
+      color: "gray",
+      gradient: "from-gray-500 to-slate-600",
       features: [
-        "2 Archivistes",
-        "2 Projets",
-        "OCR",
-        "Support",
-        "Lorem ipsum"
-      ]
+        "100 documents/month",
+        "Basic OCR processing",
+        "Email support",
+        "Standard templates",
+        "Community forum access",
+        "Basic analytics"
+      ],
+      limits: {
+        documents: "100/month",
+        users: "1 user",
+        storage: "500 MB"
+      }
     },
-    pro: {
-      title: "Plan Pro",
-      description: "Lorem ipsum dolor sit amet consectur adipis",
-      monthlyPrice: 8,
-      annualPrice: 72, 
-      savings: 24,
+    starter: {
+      title: "Starter",
+      description: "Perfect for small teams getting started with document automation",
+      monthlyPrice: 29,
+      annualPrice: 290,
+      savings: 58,
+      badge: null,
+      popular: false,
+      icon: Users,
+      color: "blue",
+      gradient: "from-blue-500 to-cyan-500",
       features: [
-        "Plan Gratuit",
-        "Plusieurs projets",
-        "2 comptes admin",
-        "4 Archivistes",
-        "Lorem Ipsum"
-      ]
+        "Everything in Free Trial",
+        "1,000 documents/month",
+        "Advanced OCR processing",
+        "Priority email support",
+        "Custom templates",
+        "API access",
+        "Advanced analytics"
+      ],
+      limits: {
+        documents: "1,000/month",
+        users: "3 users",
+        storage: "2 GB"
+      }
     },
-    business: {
-      title: "Plan Business",
-      description: "Lorem ipsum dolor sit amet consectur adipis",
-      monthlyPrice: 16,
-      annualPrice: 160, 
-      savings: 32,
+    professional: {
+      title: "Professional",
+      description: "Advanced features for growing businesses and enhanced productivity",
+      monthlyPrice: 79,
+      annualPrice: 790,
+      savings: 158,
+      badge: "Most Popular",
+      popular: true,
+      icon: Shield,
+      color: "green",
+      gradient: "from-[#8cd139] to-[#6ab526]",
       features: [
-        "Plan Pro",
-        "comptes admin illimités",
-        "Lorem ipsum",
-        "Lorem",
-        "Dolor sit amet"
-      ]
+        "Everything in Starter",
+        "10,000 documents/month",
+        "AI-powered extraction",
+        "24/7 chat support",
+        "Workflow automation",
+        "Multi-language support",
+        "Advanced integrations",
+        "Team collaboration tools"
+      ],
+      limits: {
+        documents: "10,000/month",
+        users: "15 users",
+        storage: "25 GB"
+      }
+    },
+    enterprise: {
+      title: "Enterprise",
+      description: "Unlimited scale with enterprise-grade security and dedicated support",
+      monthlyPrice: 199,
+      annualPrice: 1990,
+      savings: 398,
+      badge: "Best Value",
+      popular: false,
+      icon: Crown,
+      color: "purple",
+      gradient: "from-purple-500 to-violet-600",
+      features: [
+        "Everything in Professional",
+        "Unlimited documents",
+        "Custom AI models",
+        "Dedicated account manager",
+        "On-premise deployment",
+        "Enterprise security (SSO)",
+        "SLA guarantee (99.9%)",
+        "Custom integrations",
+        "White-label options"
+      ],
+      limits: {
+        documents: "Unlimited",
+        users: "Unlimited",
+        storage: "Unlimited"
+      }
     }
   };
 
-  const handleBillingPeriodChange = (period) => {
-    setBillingPeriod(period);
-  };
+  useEffect(() => {
+    if (isInView && sectionRef.current) {
+      // GSAP animations for entrance
+      const tl = gsap.timeline();
+      
+      tl.fromTo('.pricing-header',
+        { y: 50, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1, ease: "power3.out" }
+      )
+      .fromTo('.pricing-toggle',
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8, ease: "power2.out" },
+        "-=0.5"
+      )
+      .fromTo('.pricing-card',
+        { y: 60, opacity: 0, scale: 0.9 },
+        { 
+          y: 0, 
+          opacity: 1, 
+          scale: 1,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: "back.out(1.4)"
+        },
+        "-=0.3"
+      );
+    }
+  }, [isInView]);
 
-  // Fonction pour obtenir le prix actuel en fonction de la période sélectionnée
-  const getPrice = (plan) => {
+  const getPrice = (plan: any) => {
     return billingPeriod === 'monthly' ? plan.monthlyPrice : plan.annualPrice;
   };
 
-  // Calcul des économies annuelles
-  const getSavingsText = (plan) => {
+  const getSavingsText = (plan: any) => {
     if (billingPeriod !== 'annual' || !plan.savings) return null;
-    return `Économisez ${plan.savings}fcfa`;
+    return `Save $${plan.savings}`;
+  };
+
+  const getMonthlyEquivalent = (plan: any) => {
+    if (billingPeriod === 'annual' && plan.annualPrice) {
+      return (plan.annualPrice / 12).toFixed(0);
+    }
+    return null;
+  };
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.3
+      }
+    }
+  };
+
+  const cardVariants = {
+    hidden: { y: 50, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 10
+      }
+    }
   };
 
   return (
-    <div id='tarifs' className="max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-      <div className="text-center">
-        <h2 className="text-3xl font-bold text-gray-900">
-          Trouvez le plan parfait pour vous.
-        </h2>
+    <section 
+      ref={sectionRef}
+      className="relative py-16 sm:py-20 lg:py-24 bg-gradient-to-br from-gray-50 via-white to-gray-50 overflow-hidden"
+      id="pricing"
+    >
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-r from-blue-200/20 to-purple-200/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-green-200/20 to-blue-200/20 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="mt-12 flex justify-center">
-        <div className="relative inline-flex rounded-md shadow-sm">
-          <button
-            type="button"
-            className={`relative px-4 py-2 text-sm font-medium transition-all duration-200 rounded-l-md ${
-              billingPeriod === 'monthly' 
-                ? 'bg-white text-gray-900 shadow-inner' 
-                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-            }`}
-            onClick={() => handleBillingPeriodChange('monthly')}
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header Section */}
+        <motion.div 
+          className="pricing-header text-center mb-16 lg:mb-20"
+          variants={containerVariants}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+        >
+          <motion.div 
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-[#8cd139]/20 to-[#6ab526]/20 px-4 py-2 rounded-full text-sm font-medium text-[#2d5016] mb-6"
+            variants={cardVariants}
           >
-            Mensuel
-          </button>
-          <button
-            type="button"
-            className={`relative px-4 py-2 text-sm font-medium transition-all duration-200 rounded-r-md ${
-              billingPeriod === 'annual' 
-                ? 'bg-lime-500 text-white shadow-inner' 
-                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-            }`}
-            onClick={() => handleBillingPeriodChange('annual')}
+            <Calculator size={16} className="text-[#8cd139]" />
+            Flexible Pricing Plans
+          </motion.div>
+          
+          <motion.h2 
+            className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 mb-6 leading-tight"
+            variants={cardVariants}
           >
-            Annuel
-          </button>
-        </div>
-      </div>
-
-      <div className="mt-12 grid grid-cols-1 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 gap-x-8">
-        {/* Essai Plan */}
-        <div className="relative bg-white rounded-2xl shadow-lg p-8 flex flex-col h-full transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
-          <h3 className="text-2xl font-medium text-gray-900 text-center">{plans.free.title}</h3>
-          <p className="mt-4 text-center text-gray-500">
-            {plans.free.description}
-          </p>
-          <div className="mt-6 text-center">
-            <span className="text-4xl font-bold text-gray-900">{getPrice(plans.free)}</span>
-            <span className="text-sm font-medium text-gray-500 ml-1">fcfa</span>
-            {billingPeriod === 'annual' && <p className="text-xs text-gray-500 mt-1">{getPrice(plans.free) / 12} fcfa par mois</p>}
-          </div>
-
-          <ul className="mt-8 space-y-4 flex-1">
-            {plans.free.features.map((feature, index) => (
-              <li key={index} className="flex items-start">
-                <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center h-6 w-6 rounded-full bg-lime-500">
-                    <svg className="h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                </div>
-                <p className="ml-3 text-base text-gray-700">{feature}</p>
-              </li>
-            ))}
-          </ul>
-
-          <div className="mt-8">
-            <button
-              type="button"
-              className="w-full bg-white border border-lime-500 rounded-md py-2 text-sm font-medium text-lime-500 transition-all duration-200 hover:bg-lime-50 hover:shadow-md"
-            >
-              Acheter
-            </button>
-          </div>
-        </div>
-
-        {/* Plan Pro */}
-        <div className="relative bg-lime-500 rounded-2xl shadow-lg p-8 flex flex-col h-full transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
-          <div className="absolute inset-x-0 transform translate-y-px">
-            <div className="flex justify-center transform -translate-y-1/2">
-              <span className="inline-flex rounded-full bg-lime-600 px-4 py-1 text-sm font-semibold tracking-wider uppercase text-white">
-                {plans.pro.title}
+            Choose the perfect plan for{' '}
+            <span className="relative">
+              <span className="bg-gradient-to-r from-[#8cd139] to-[#6ab526] bg-clip-text text-transparent">
+                your business
               </span>
-            </div>
-          </div>
-          <h3 className="text-2xl font-medium text-white text-center mt-4">{plans.pro.title}</h3>
-          <p className="mt-4 text-center text-white opacity-75">
-            {plans.pro.description}
-          </p>
-          <div className="mt-6 text-center">
-            <span className="text-5xl font-bold text-white">{getPrice(plans.pro)}</span>
-            <span className="text-sm font-medium text-white opacity-75 ml-1">fcfa</span>
-            {billingPeriod === 'annual' && <p className="text-xs text-white opacity-75 mt-1">{(getPrice(plans.pro) / 12).toFixed(1)} fcfa par mois</p>}
-          </div>
+              <svg className="absolute -bottom-2 left-0 w-full h-3" viewBox="0 0 200 12" preserveAspectRatio="none">
+                <path d="M0,8 Q50,2 100,8 T200,8" stroke="#8cd139" strokeWidth="3" fill="none" opacity="0.6"/>
+              </svg>
+            </span>
+          </motion.h2>
+          
+          <motion.p 
+            className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
+            variants={cardVariants}
+          >
+            Scale your document processing capabilities with transparent pricing. 
+            No hidden fees, cancel anytime, and upgrade as you grow.
+          </motion.p>
+        </motion.div>
 
-          <div className="mt-6 p-4 bg-white rounded-lg">
-            {getSavingsText(plans.pro) && (
-              <div className="flex justify-center">
-                <span className="px-4 py-1 text-xs font-semibold tracking-wider uppercase text-lime-800 bg-lime-100 rounded-full">
-                  {getSavingsText(plans.pro)}
-                </span>
-              </div>
-            )}
-
-            <ul className="mt-6 space-y-4">
-              {plans.pro.features.map((feature, index) => (
-                <li key={index} className="flex items-start">
-                  <div className="flex-shrink-0">
-                    <div className="flex items-center justify-center h-6 w-6 rounded-full bg-lime-500">
-                      <svg className="h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                  </div>
-                  <p className="ml-3 text-base text-gray-700">{feature}</p>
-                </li>
-              ))}
-            </ul>
-
-            <div className="mt-8">
+        {/* Billing Toggle */}
+        <motion.div 
+          className="pricing-toggle flex justify-center mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ delay: 0.5, duration: 0.6 }}
+        >
+          <div className="relative bg-white rounded-full p-1 shadow-lg border border-gray-200">
+            <div className="flex items-center">
               <button
-                type="button"
-                className="w-full bg-lime-500 rounded-md py-2 text-sm font-medium text-white transition-all duration-200 hover:bg-lime-600 hover:shadow-md"
+                className={`relative px-6 py-3 text-sm font-semibold rounded-full transition-all duration-300 ${
+                  billingPeriod === 'monthly' 
+                    ? 'text-gray-900 bg-white shadow-md' 
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+                onClick={() => setBillingPeriod('monthly')}
               >
-                Acheter
+                <Clock size={16} className="inline-block mr-2" />
+                Monthly
+              </button>
+              <button
+                className={`relative px-6 py-3 text-sm font-semibold rounded-full transition-all duration-300 ${
+                  billingPeriod === 'annual' 
+                    ? 'text-white bg-gradient-to-r from-[#8cd139] to-[#6ab526] shadow-md' 
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+                onClick={() => setBillingPeriod('annual')}
+              >
+                <Globe size={16} className="inline-block mr-2" />
+                Annual
+                <span className="ml-2 px-2 py-1 text-xs bg-white/20 rounded-full">Save 20%</span>
               </button>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Plan Business */}
-        <div className="relative bg-white rounded-2xl shadow-lg p-8 flex flex-col h-full transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
-          <h3 className="text-2xl font-medium text-gray-900 text-center">{plans.business.title}</h3>
-          <p className="mt-4 text-center text-gray-500">
-            {plans.business.description}
-          </p>
-          <div className="mt-6 text-center">
-            <span className="text-4xl font-bold text-gray-900">{getPrice(plans.business)}</span>
-            <span className="text-sm font-medium text-gray-500 ml-1">fcfa</span>
-            {billingPeriod === 'annual' && <p className="text-xs text-gray-500 mt-1">{(getPrice(plans.business) / 12).toFixed(1)} fcfa par mois</p>}
-          </div>
-
-          <ul className="mt-8 space-y-4 flex-1">
-            {plans.business.features.map((feature, index) => (
-              <li key={index} className="flex items-start">
-                <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center h-6 w-6 rounded-full bg-lime-500">
-                    <svg className="h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                </div>
-                <p className="ml-3 text-base text-gray-700">{feature}</p>
-              </li>
-            ))}
-          </ul>
-
-          <div className="mt-8">
-            <button
-              type="button"
-              className="w-full bg-white border border-lime-500 rounded-md py-2 text-sm font-medium text-lime-500 transition-all duration-200 hover:bg-lime-50 hover:shadow-md"
+        {/* Pricing Cards */}
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-8"
+          variants={containerVariants}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+        >
+          {Object.entries(plans).map(([key, plan], index) => (
+            <motion.div
+              key={key}
+              className={`pricing-card relative ${
+                plan.popular 
+                  ? 'lg:scale-105 lg:-mt-4 lg:mb-4' 
+                  : ''
+              }`}
+              variants={cardVariants}
+              whileHover={{ 
+                y: -8,
+                transition: { type: "spring", stiffness: 300, damping: 20 }
+              }}
+              onMouseEnter={() => setSelectedPlan(key)}
             >
-              Acheter
-            </button>
-          </div>
-          {getSavingsText(plans.business) && (
-            <div className="mt-3 text-center">
-              <span className="text-xs font-semibold text-lime-600">
-                {getSavingsText(plans.business)}
-              </span>
+              <div className={`relative h-full bg-white rounded-2xl shadow-xl border-2 transition-all duration-300 ${
+                plan.popular 
+                  ? 'border-[#8cd139] shadow-2xl' 
+                  : selectedPlan === key
+                    ? 'border-gray-300 shadow-xl'
+                    : 'border-gray-200 hover:border-gray-300'
+              }`}>
+                {/* Popular Badge */}
+                {plan.badge && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <span className={`inline-flex items-center gap-1 px-4 py-2 rounded-full text-sm font-semibold text-white bg-gradient-to-r ${plan.gradient} shadow-lg`}>
+                      <Star size={14} />
+                      {plan.badge}
+                    </span>
+                  </div>
+                )}
+
+                <div className="p-8">
+                  {/* Plan Header */}
+                  <div className="text-center mb-8">
+                    <div className={`inline-flex p-3 rounded-2xl bg-gradient-to-r ${plan.gradient} mb-4`}>
+                      <plan.icon size={32} className="text-white" />
+                    </div>
+                    
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                      {plan.title}
+                    </h3>
+                    
+                    <p className="text-gray-600 leading-relaxed">
+                      {plan.description}
+                    </p>
+                  </div>
+
+                  {/* Pricing */}
+                  <div className="text-center mb-8">
+                    <div className="flex items-baseline justify-center gap-1">
+                      <span className="text-5xl font-bold text-gray-900">
+                        ${getPrice(plan)}
+                      </span>
+                      <span className="text-gray-600 font-medium">
+                        /{billingPeriod === 'monthly' ? 'month' : 'year'}
+                      </span>
+                    </div>
+                    
+                    {billingPeriod === 'annual' && getMonthlyEquivalent(plan) && (
+                      <p className="text-sm text-gray-500 mt-2">
+                        ${getMonthlyEquivalent(plan)}/month billed annually
+                      </p>
+                    )}
+                    
+                    {getSavingsText(plan) && (
+                      <div className="mt-3">
+                        <span className="inline-block px-3 py-1 text-sm font-semibold text-green-700 bg-green-100 rounded-full">
+                          {getSavingsText(plan)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Usage Limits */}
+                  <div className="mb-8 p-4 bg-gray-50 rounded-xl">
+                    <h4 className="font-semibold text-gray-900 mb-3">Usage Limits</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Documents</span>
+                        <span className="font-medium text-gray-900">{plan.limits.documents}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Team members</span>
+                        <span className="font-medium text-gray-900">{plan.limits.users}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Storage</span>
+                        <span className="font-medium text-gray-900">{plan.limits.storage}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Features */}
+                  <ul className="space-y-4 mb-8">
+                    {plan.features.map((feature, featureIndex) => (
+                      <li key={featureIndex} className="flex items-start gap-3">
+                        <div className={`flex-shrink-0 w-5 h-5 rounded-full bg-gradient-to-r ${plan.gradient} flex items-center justify-center mt-0.5`}>
+                          <Check size={12} className="text-white" />
+                        </div>
+                        <span className="text-gray-700 leading-relaxed">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* CTA Button */}
+                  <motion.button
+                    className={`w-full py-4 px-6 rounded-xl font-semibold text-lg transition-all duration-300 group ${
+                      plan.popular
+                        ? `bg-gradient-to-r ${plan.gradient} text-white shadow-lg hover:shadow-xl`
+                        : 'bg-white border-2 border-gray-300 text-gray-900 hover:border-gray-400 hover:shadow-md'
+                    }`}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    Get Started
+                    <ArrowRight size={18} className="inline-block ml-2 group-hover:translate-x-1 transition-transform" />
+                  </motion.button>
+
+                  {plan.title === 'Enterprise' && (
+                    <p className="text-center text-sm text-gray-500 mt-4">
+                      Custom pricing available • Contact sales
+                    </p>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Trust Section */}
+        <motion.div 
+          className="mt-20 text-center"
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ delay: 1.2, duration: 0.8 }}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div className="flex items-center justify-center gap-3">
+              <Shield size={24} className="text-[#8cd139]" />
+              <span className="text-gray-600 font-medium">30-day money-back guarantee</span>
             </div>
-          )}
-        </div>
+            <div className="flex items-center justify-center gap-3">
+              <Clock size={24} className="text-[#8cd139]" />
+              <span className="text-gray-600 font-medium">Cancel anytime</span>
+            </div>
+            <div className="flex items-center justify-center gap-3">
+              <Users size={24} className="text-[#8cd139]" />
+              <span className="text-gray-600 font-medium">24/7 customer support</span>
+            </div>
+          </div>
+
+          <div className="mt-12">
+            <p className="text-gray-600 mb-6">
+              Questions about pricing? Our team is here to help.
+            </p>
+            <motion.button 
+              className="bg-white border-2 border-[#8cd139] text-[#8cd139] px-8 py-3 rounded-full font-semibold hover:bg-[#8cd139] hover:text-white transition-all duration-300"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Contact Sales
+            </motion.button>
+          </div>
+        </motion.div>
       </div>
-    </div>
+    </section>
   );
-}
+};
+
+export default PricingComponent;

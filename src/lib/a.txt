@@ -1,247 +1,926 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { 
+  Heart, 
+  Scale, 
+  BookOpen, 
+  Banknote, 
+  Check, 
+  Bot, 
+  Zap, 
+  ArrowRight,
+  TrendingUp,
+  Shield,
+  Clock,
+  Users,
+  ChevronRight,
+  Sparkles
+} from "lucide-react";
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 
-const features = [
+// Register GSAP plugin
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
+interface UseCaseStats {
+  automation: string;
+  efficiency: string;
+  accuracy: string;
+  roi: string;
+}
+
+interface AgenticCapability {
+  name: string;
+  description: string;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+}
+
+interface UseCase {
+  id: number;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  title: string;
+  description: string;
+  stats: UseCaseStats;
+  agenticCapabilities: AgenticCapability[];
+  automationWorkflows: string[];
+  color: string;
+  gradient: string;
+  industry: string;
+  realWorldExample: string;
+}
+
+const useCases: UseCase[] = [
   {
-    title: "Numérisation polyvalente",
-    description: "Numérisez tout type de document (PDF, images, documents manuscrits) avec une précision exceptionnelle. Notre technologie s'adapte à tous les formats et garantit une qualité optimale.",
-    icon: "📄",
-    image: `data:image/svg+xml,${encodeURIComponent(`
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-        <rect width="70" height="90" x="15" y="5" fill="#4F46E5" rx="4"/>
-        <rect width="50" height="10" x="25" y="20" fill="white" rx="2"/>
-        <rect width="50" height="10" x="25" y="40" fill="white" rx="2"/>
-        <rect width="50" height="10" x="25" y="60" fill="white" rx="2"/>
-      </svg>
-    `)}`,
+    id: 1,
+    icon: Heart,
+    title: "Healthcare & Medical",
+    description: "AI-powered automation for patient records, medical imaging analysis, and clinical documentation with intelligent workflow orchestration.",
+    stats: {
+      automation: "95%",
+      efficiency: "+400%",
+      accuracy: "99.7%",
+      roi: "+320%"
+    },
+    agenticCapabilities: [
+      {
+        name: "Intelligent Triage",
+        description: "AI agents automatically prioritize urgent medical documents and route them to appropriate specialists",
+        icon: Bot
+      },
+      {
+        name: "Clinical Decision Support",
+        description: "Automated analysis of medical records to suggest treatment recommendations and flag potential risks",
+        icon: Sparkles
+      },
+      {
+        name: "Compliance Monitoring",
+        description: "Continuous monitoring and automated reporting for healthcare regulations (HIPAA, medical standards)",
+        icon: Shield
+      }
+    ],
+    automationWorkflows: [
+      "Patient admission form processing",
+      "Medical imaging report generation",
+      "Insurance claim automation",
+      "Prescription verification and tracking",
+      "Medical record digitization and classification"
+    ],
+    color: "emerald",
+    gradient: "from-emerald-500 to-green-600",
+    industry: "Healthcare",
+    realWorldExample: "Central Hospital of Yaoundé reduced patient processing time by 75% using AI agents for automated document triage and medical record analysis."
   },
   {
-    title: "OCR multilingue",
-    description: "Reconnaissance de caractères dans plus de 190 langues, incluant les alphabets non-latins. Performance optimale sur les textes imprimés et manuscrits avec un taux de précision supérieur à 99%.",
-    icon: "🌍",
-    image: `data:image/svg+xml,${encodeURIComponent(`
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="45" fill="#4F46E5"/>
-        <text x="50" y="45" font-size="12" fill="white" text-anchor="middle">ABC</text>
-        <text x="50" y="65" font-size="12" fill="white" text-anchor="middle">文字</text>
-      </svg>
-    `)}`,
+    id: 2,
+    icon: Scale,
+    title: "Legal & Compliance",
+    description: "Agentic automation for contract analysis, legal document review, and regulatory compliance with intelligent case management.",
+    stats: {
+      automation: "88%",
+      efficiency: "+350%",
+      accuracy: "99.2%",
+      roi: "+280%"
+    },
+    agenticCapabilities: [
+      {
+        name: "Contract Intelligence",
+        description: "AI agents extract, analyze, and summarize key contract terms, clauses, and obligations automatically",
+        icon: Bot
+      },
+      {
+        name: "Legal Research Automation",
+        description: "Automated case law research and precedent analysis with intelligent recommendations",
+        icon: Sparkles
+      },
+      {
+        name: "Compliance Tracking",
+        description: "Real-time monitoring of regulatory changes and automatic compliance status updates",
+        icon: Shield
+      }
+    ],
+    automationWorkflows: [
+      "Contract review and red-flag detection",
+      "Legal document classification and indexing",
+      "Regulatory compliance reporting",
+      "Case file organization and tracking",
+      "Client onboarding and KYC automation"
+    ],
+    color: "blue",
+    gradient: "from-blue-500 to-indigo-600",
+    industry: "Legal Services",
+    realWorldExample: "Maître Bello & Associates automated 90% of contract reviews, reducing turnaround time from 3 days to 2 hours with AI-powered legal analysis."
   },
   {
-    title: "Extraction d'entités nommées",
-    description: "Identification automatique des noms, dates, montants et autres informations cruciales dans vos documents. Classification intelligente et structuration automatique des données extraites.",
-    icon: "🎯",
-    image: `data:image/svg+xml,${encodeURIComponent(`
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-        <path d="M20,20 L80,20 L80,80 L20,80 Z" fill="none" stroke="#4F46E5" stroke-width="4"/>
-        <circle cx="50" cy="50" r="20" fill="#4F46E5"/>
-        <circle cx="50" cy="50" r="10" fill="white"/>
-      </svg>
-    `)}`,
+    id: 3,
+    icon: BookOpen,
+    title: "Education & Research",
+    description: "Intelligent automation for academic administration, research documentation, and student services with adaptive learning support.",
+    stats: {
+      automation: "92%",
+      efficiency: "+450%",
+      accuracy: "98.9%",
+      roi: "+380%"
+    },
+    agenticCapabilities: [
+      {
+        name: "Academic Analytics",
+        description: "AI agents analyze student performance data and provide personalized learning recommendations",
+        icon: Bot
+      },
+      {
+        name: "Research Acceleration",
+        description: "Automated literature review, citation analysis, and research paper categorization",
+        icon: Sparkles
+      },
+      {
+        name: "Administrative Automation",
+        description: "Intelligent handling of enrollment, grading, and administrative workflow optimization",
+        icon: Shield
+      }
+    ],
+    automationWorkflows: [
+      "Student enrollment and registration",
+      "Academic transcript processing",
+      "Research paper classification and indexing",
+      "Examination and assessment automation",
+      "Library resource management and cataloging"
+    ],
+    color: "amber",
+    gradient: "from-amber-500 to-orange-600",
+    industry: "Education",
+    realWorldExample: "University of Douala implemented AI agents for student services, achieving 24/7 automated support and reducing administrative workload by 80%."
   },
   {
-    title: "Analyse sémantique",
-    description: "Compréhension approfondie du contexte et du sens des documents traités. Catégorisation automatique et extraction des points clés avec une précision remarquable.",
-    icon: "🧠",
-    image: `data:image/svg+xml,${encodeURIComponent(`
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-        <path d="M30,50 Q50,20 70,50" fill="none" stroke="#4F46E5" stroke-width="4"/>
-        <circle cx="30" cy="50" r="10" fill="#4F46E5"/>
-        <circle cx="70" cy="50" r="10" fill="#4F46E5"/>
-      </svg>
-    `)}`,
-  },
-  {
-    title: "Gestion des données",
-    description: "Stockage sécurisé et organisation intelligente de vos documents numérisés. Interface intuitive pour rechercher, filtrer et exporter vos données en quelques clics.",
-    icon: "💾",
-    image: `data:image/svg+xml,${encodeURIComponent(`
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-        <rect width="60" height="70" x="20" y="15" fill="#4F46E5" rx="4"/>
-        <circle cx="50" cy="35" r="10" fill="white"/>
-        <rect width="40" height="6" x="30" y="55" fill="white" rx="2"/>
-        <rect width="40" height="6" x="30" y="65" fill="white" rx="2"/>
-      </svg>
-    `)}`,
-  },
+    id: 4,
+    icon: Banknote,
+    title: "Banking & Finance",
+    description: "Advanced agentic automation for financial document processing, risk assessment, and regulatory compliance with real-time fraud detection.",
+    stats: {
+      automation: "97%",
+      efficiency: "+500%",
+      accuracy: "99.9%",
+      roi: "+420%"
+    },
+    agenticCapabilities: [
+      {
+        name: "Fraud Detection AI",
+        description: "Intelligent agents continuously monitor transactions and documents for suspicious patterns and anomalies",
+        icon: Bot
+      },
+      {
+        name: "Risk Assessment Automation",
+        description: "AI-powered credit scoring and loan processing with automated decision recommendations",
+        icon: Sparkles
+      },
+      {
+        name: "Regulatory Compliance",
+        description: "Automated AML/KYC processes and real-time regulatory reporting with compliance monitoring",
+        icon: Shield
+      }
+    ],
+    automationWorkflows: [
+      "Loan application processing and approval",
+      "KYC/AML document verification",
+      "Financial statement analysis",
+      "Insurance claim processing",
+      "Investment portfolio management and reporting"
+    ],
+    color: "purple",
+    gradient: "from-purple-500 to-violet-600",
+    industry: "Financial Services",
+    realWorldExample: "Afriland First Bank deployed AI agents for loan processing, reducing approval time from 5 days to 30 minutes while maintaining 99.9% accuracy."
+  }
 ];
 
-const FeatureCard = ({ feature, index }) => {
-  const cardRef = useRef(null);
-  const imageRef = useRef(null);
+interface UseCaseCardProps {
+  useCase: UseCase;
+  index: number;
+  isActive: boolean;
+  onHover: () => void;
+}
+
+const UseCaseCard = ({ useCase, index, isActive, onHover }: UseCaseCardProps) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
+    if (!cardRef.current) return;
 
-    // Animation de la carte
-    gsap.from(cardRef.current, {
-      scrollTrigger: {
-        trigger: cardRef.current,
-        start: "top center+=100",
-        toggleActions: "play none none reverse",
-      },
-      opacity: 0,
-      y: 50,
-      rotationX: -30,
-      duration: 1,
-      ease: "power3.out",
-    });
-
-    // Animation de l'image
-    gsap.to(imageRef.current, {
-      scrollTrigger: {
-        trigger: imageRef.current,
-        start: "top center",
-        scrub: 1,
-      },
-      rotationY: 360,
-      transformPerspective: 1000,
-      ease: "none",
-      repeat: -1,
-    });
-
-    // Animation au survol
-    const hoverAnimation = gsap.to(cardRef.current, {
-      scale: 1.05,
-      rotationY: 5,
-      boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
-      duration: 0.3,
-      paused: true,
-    });
-
-    cardRef.current.addEventListener("mouseenter", () => hoverAnimation.play());
-    cardRef.current.addEventListener("mouseleave", () => hoverAnimation.reverse());
-
-    return () => {
-      ScrollTrigger.getAll().forEach(t => t.kill());
-    };
-  }, []);
-
-  return (
-    <div
-      ref={cardRef}
-      className="bg-white rounded-2xl p-8 shadow-lg transform-gpu"
-      style={{ perspective: "1000px" }}
-    >
-      <div className="flex items-start gap-6">
-        <div
-          ref={imageRef}
-          className="w-24 h-24 flex-shrink-0 relative"
-        >
-          <img
-            src={feature.image}
-            alt={feature.title}
-            className="w-full h-full object-contain"
-          />
-        </div>
-        <div>
-          <h3 className="text-xl font-bold mb-3 text-gray-900">{feature.title}</h3>
-          <p className="text-gray-600 leading-relaxed">{feature.description}</p>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const Visualization = () => {
-  const containerRef = useRef(null);
-
-  useEffect(() => {
-    const elements = containerRef.current.children;
-    
-    gsap.set(elements, {
-      transformPerspective: 1000,
-    });
-
-    gsap.to(elements, {
-      rotationY: 360,
-      duration: 20,
-      stagger: 2,
-      repeat: -1,
-      ease: "none",
-    });
-
-    // Animation des particules
-    const particles = [...Array(10)].map((_, i) => {
-      const particle = document.createElement('div');
-      particle.className = 'absolute w-2 h-2 bg-indigo-500 rounded-full';
-      containerRef.current.appendChild(particle);
-
-      gsap.set(particle, {
-        x: Math.random() * 400 - 200,
-        y: Math.random() * 400 - 200,
+    // Entrance animation
+    gsap.fromTo(cardRef.current,
+      {
         opacity: 0,
-      });
-
-      gsap.to(particle, {
-        duration: 2 + Math.random() * 2,
-        opacity: 0.5,
-        scale: Math.random() * 2,
-        repeat: -1,
-        yoyo: true,
-        ease: "power1.inOut",
-      });
-
-      return particle;
-    });
-
-    return () => {
-      particles.forEach(p => p.remove());
-    };
-  }, []);
+        y: 80,
+        rotationX: -20,
+        scale: 0.9
+      },
+      {
+        scrollTrigger: {
+          trigger: cardRef.current,
+          start: "top 85%",
+          toggleActions: "play none none reverse"
+        },
+        opacity: 1,
+        y: 0,
+        rotationX: 0,
+        scale: 1,
+        duration: 0.8,
+        delay: index * 0.15,
+        ease: "power3.out"
+      }
+    );
+  }, [index]);
 
   return (
-    <div
-      ref={containerRef}
-      className="relative w-full h-96 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl overflow-hidden"
+    <motion.div
+      ref={cardRef}
+      className={`relative group cursor-pointer transform-gpu ${
+        isActive ? 'lg:scale-105 lg:z-10' : ''
+      }`}
+      onMouseEnter={() => {
+        onHover();
+        setShowDetails(true);
+      }}
+      onMouseLeave={() => setShowDetails(false)}
+      whileHover={{ y: -8 }}
+      layout
     >
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="text-center">
-          <h4 className="text-2xl font-bold text-indigo-900 mb-4">
-            Visualisation 3D
-          </h4>
-          <p className="text-indigo-600">
-            Explorez nos fonctionnalités en profondeur
-          </p>
+      <div className={`relative bg-white rounded-2xl overflow-hidden shadow-xl border-2 transition-all duration-500 ${
+        isActive 
+          ? 'border-[#8cd139] shadow-2xl' 
+          : 'border-white/20 hover:border-gray-200 hover:shadow-2xl'
+      }`}>
+        {/* Gradient Background */}
+        <div className={`absolute inset-0 bg-gradient-to-br ${useCase.gradient} opacity-5 group-hover:opacity-10 transition-opacity duration-500`} />
+
+        {/* Industry Badge */}
+        <div className="absolute top-4 right-4 z-10">
+          <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold text-white bg-gradient-to-r ${useCase.gradient}`}>
+            {useCase.industry}
+          </span>
         </div>
+
+        <div className="relative p-8 z-10">
+          {/* Icon Section */}
+          <div className="mb-6">
+            <motion.div 
+              className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${useCase.gradient} p-4 flex items-center justify-center text-white shadow-lg`}
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+              <useCase.icon size={32} />
+            </motion.div>
+          </div>
+
+          {/* Content */}
+          <div>
+            <h3 className="text-xl lg:text-2xl font-bold mb-4 text-gray-900 leading-tight">
+              {useCase.title}
+            </h3>
+            
+            <p className="text-gray-600 mb-6 leading-relaxed">
+              {useCase.description}
+            </p>
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              {Object.entries(useCase.stats).map(([key, value]) => (
+                <div key={key} className="text-center p-3 bg-gray-50 rounded-xl border border-gray-100">
+                  <div className={`text-lg font-bold bg-gradient-to-r ${useCase.gradient} bg-clip-text text-transparent`}>
+                    {value}
+                  </div>
+                  <div className="text-xs text-gray-500 capitalize font-medium">
+                    {key.replace(/([A-Z])/g, ' $1').trim()}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Agentic Capabilities Preview */}
+            <div className="mb-6">
+              <h4 className="flex items-center gap-2 font-semibold text-gray-900 mb-3">
+                <Bot size={16} className="text-[#8cd139]" />
+                AI Agent Capabilities
+              </h4>
+              <div className="space-y-2">
+                {useCase.agenticCapabilities.slice(0, 2).map((capability, idx) => (
+                  <div key={idx} className="flex items-start gap-2">
+                    <Check size={16} className="text-[#8cd139] mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-gray-700 font-medium">{capability.name}</span>
+                  </div>
+                ))}
+                <div className="text-sm text-gray-500">
+                  +{useCase.agenticCapabilities.length - 2} more capabilities
+                </div>
+              </div>
+            </div>
+
+            {/* CTA */}
+            <motion.button
+              className={`group w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-semibold transition-all duration-300 ${
+                isActive
+                  ? `bg-gradient-to-r ${useCase.gradient} text-white shadow-lg`
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setShowDetails(!showDetails)}
+            >
+              <span>Explore Solution</span>
+              <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            </motion.button>
+          </div>
+        </div>
+
+        {/* Detailed View Modal/Overlay */}
+        <AnimatePresence>
+          {showDetails && (
+            <motion.div
+              className="absolute inset-0 bg-white rounded-2xl z-20 overflow-hidden"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="p-6 h-full overflow-y-auto">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-bold text-gray-900">{useCase.title}</h3>
+                  <button
+                    onClick={() => setShowDetails(false)}
+                    className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200"
+                  >
+                    ×
+                  </button>
+                </div>
+
+                {/* Agentic Capabilities */}
+                <div className="mb-6">
+                  <h4 className="font-semibold text-gray-900 mb-3">Agentic AI Capabilities</h4>
+                  <div className="space-y-3">
+                    {useCase.agenticCapabilities.map((capability, idx) => (
+                      <div key={idx} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                        <capability.icon size={20} className="text-[#8cd139] mt-0.5" />
+                        <div>
+                          <div className="font-medium text-gray-900">{capability.name}</div>
+                          <div className="text-sm text-gray-600">{capability.description}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Automation Workflows */}
+                <div className="mb-6">
+                  <h4 className="font-semibold text-gray-900 mb-3">Automated Workflows</h4>
+                  <div className="space-y-2">
+                    {useCase.automationWorkflows.map((workflow, idx) => (
+                      <div key={idx} className="flex items-center gap-2">
+                        <Zap size={14} className="text-[#8cd139]" />
+                        <span className="text-sm text-gray-700">{workflow}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Real World Example */}
+                <div className="p-4 bg-[#8cd139]/10 rounded-lg border border-[#8cd139]/20">
+                  <h4 className="font-semibold text-[#2d5016] mb-2">Real-World Success</h4>
+                  <p className="text-sm text-[#2d5016]">{useCase.realWorldExample}</p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
-export default function FeaturesSection() {
-  return (
-    <section className="py-20 px-4 md:px-8 lg:px-16 bg-gray-50 overflow-hidden">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Fonctionnalités avancées
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Découvrez notre suite complète d&apos;outils de traitement documentaire
-            alimentée par l&apos;intelligence artificielle.
-          </p>
-        </div>
+export default function UseCasesSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [activeCase, setActiveCase] = useState(0);
+  const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-          <div className="space-y-8">
-            {features.map((feature, index) => (
-              <FeatureCard
-                key={index}
-                feature={feature}
-                index={index}
-              />
-            ))}
-          </div>
+  useEffect(() => {
+    if (isInView && sectionRef.current) {
+      // GSAP timeline for section animation
+      const tl = gsap.timeline();
+      
+      tl.fromTo('.section-header',
+        { y: 50, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1, ease: "power3.out" }
+      );
+    }
+
+    // Auto-rotate active case
+    const interval = setInterval(() => {
+      setActiveCase(prev => (prev + 1) % useCases.length);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [isInView]);
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.3
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 30, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 10
+      }
+    }
+  };
+
+  return (
+    <section 
+      ref={sectionRef}
+      className="relative py-16 sm:py-20 lg:py-24 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white overflow-hidden"
+      id="use-cases"
+    >
+      {/* Background effects */}
+      <div className="absolute inset-0">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header Section */}
+        <motion.div 
+          className="section-header text-center mb-16 lg:mb-20"
+          variants={containerVariants}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+        >
+          <motion.div 
+            className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium text-blue-100 mb-6"
+            variants={itemVariants}
+          >
+            <Bot size={16} className="text-[#8cd139]" />
+            Agentic Automation Solutions
+          </motion.div>
           
-          <div className="sticky top-8">
-            <Visualization />
-          </div>
-        </div>
+          <motion.h2 
+            className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 leading-tight"
+            variants={itemVariants}
+          >
+            AI agents transforming{' '}
+            <span className="relative">
+              <span className="bg-gradient-to-r from-[#8cd139] to-[#6ab526] bg-clip-text text-transparent">
+                every industry
+              </span>
+              <svg className="absolute -bottom-2 left-0 w-full h-3" viewBox="0 0 200 12" preserveAspectRatio="none">
+                <path d="M0,8 Q50,2 100,8 T200,8" stroke="#8cd139" strokeWidth="3" fill="none" opacity="0.6"/>
+              </svg>
+            </span>
+          </motion.h2>
+          
+          <motion.p 
+            className="text-lg sm:text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed"
+            variants={itemVariants}
+          >
+            Discover how UboraAI's intelligent agents revolutionize document workflows across sectors, 
+            delivering autonomous processing, intelligent decision-making, and continuous optimization.
+          </motion.p>
+        </motion.div>
+
+        {/* Use Cases Grid */}
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8"
+          variants={containerVariants}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+        >
+          {useCases.map((useCase, index) => (
+            <UseCaseCard
+              key={useCase.id}
+              useCase={useCase}
+              index={index}
+              isActive={activeCase === index}
+              onHover={() => setActiveCase(index)}
+            />
+          ))}
+        </motion.div>
+
+        {/* Bottom CTA */}
+        <motion.div 
+          className="text-center mt-16 lg:mt-20"
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ delay: 1.2, duration: 0.8 }}
+        >
+          <motion.button 
+            className="group bg-gradient-to-r from-[#8cd139] to-[#6ab526] hover:from-[#7bc234] hover:to-[#5a9e21] text-white px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Explore All Solutions
+            <ArrowRight size={20} className="inline-block ml-2 group-hover:translate-x-1 transition-transform" />
+          </motion.button>
+          
+          <p className="text-blue-200 mt-4">
+            Ready to deploy AI agents in your industry? Let's discuss your specific needs.
+          </p>
+        </motion.div>
       </div>
     </section>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"use client";
+import React, { useEffect, useRef, useState } from 'react';
+import { Play, FileCheck, ArrowRight, Zap, Shield, Clock } from 'lucide-react';
+import Image from 'next/image';
+import { motion, useAnimation, useInView } from 'framer-motion';
+import gsap from 'gsap';
+
+const HeroSection = () => {
+  const heroRef = useRef<HTMLDivElement>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const isInView = useInView(heroRef, { once: true });
+
+  useEffect(() => {
+    setIsLoaded(true);
+    if (isInView) {
+      const tl = gsap.timeline({
+        defaults: { ease: 'power4.out' }
+      });
+
+      tl.set('.hero-content > *', { y: 100, opacity: 0 })
+        .set('.hero-image-container', { x: 100, opacity: 0, scale: 0.8 })
+        .set('.floating-element', { y: 50, opacity: 0, scale: 0.8 })
+        .set('.hero-chart', { scaleY: 0, transformOrigin: 'bottom' });
+
+      tl.to('.hero-title', {
+        y: 0,
+        opacity: 1,
+        duration: 1.2,
+        ease: 'power4.out'
+      })
+      .to('.hero-subtitle', {
+        y: 0,
+        opacity: 1,
+        duration: 1,
+        delay: 0.2
+      }, '-=0.8')
+      .to('.hero-chart', {
+        scaleY: 1,
+        duration: 1.5,
+        ease: 'power3.out'
+      }, '-=0.6')
+      .to('.hero-description', {
+        y: 0,
+        opacity: 1,
+        duration: 0.8
+      }, '-=0.4')
+      .to('.hero-buttons', {
+        y: 0,
+        opacity: 1,
+        duration: 0.8
+      }, '-=0.4')
+      .to('.hero-image-container', {
+        x: 0,
+        opacity: 1,
+        scale: 1,
+        duration: 1.2,
+        ease: 'back.out(1.7)'
+      }, '-=1')
+      .to('.floating-element', {
+        y: 0,
+        opacity: 1,
+        scale: 1,
+        stagger: 0.15,
+        duration: 0.8,
+        ease: 'back.out(1.4)'
+      }, '-=0.6');
+
+      // Effet de parallaxe amélioré (plus subtil et ciblant les éléments non 3D)
+      const handleMouseMove = (e: MouseEvent) => {
+        const rect = heroRef.current?.getBoundingClientRect();
+        if (!rect) return;
+
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+
+        // Ciblez les éléments pertinents pour le parallaxe
+        gsap.to('.hero-title, .hero-description', {
+          x: x * 10,
+          y: y * 5,
+          duration: 2,
+          ease: 'power2.out'
+        });
+
+        gsap.to('.hero-image-container', {
+          x: x * -10, // Mouvement inversé pour un effet de profondeur
+          y: y * -5,
+          duration: 2.5,
+          ease: 'power2.out'
+        });
+      };
+
+      heroRef.current?.addEventListener('mousemove', handleMouseMove);
+
+      return () => {
+        heroRef.current?.removeEventListener('mousemove', handleMouseMove);
+      };
+    }
+  }, [isInView]);
+
+
+  // Variantes d'animation Framer Motion
+  const fadeInUp = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6 }
+  };
+
+  const staggerContainer = {
+    animate: {
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  return (
+    <div ref={heroRef} className="relative w-full overflow-hidden min-h-screen bg-gradient-to-br from-[#f8fcf5] to-[#e0f7d9] flex items-center justify-center py-16 sm:py-24 lg:py-32">
+      {/* Gradient overlay pour améliorer la lisibilité */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-white/10 z-5"></div>
+
+      <div className="max-w-7xl mx-auto relative z-10 min-h-screen flex items-center">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12 w-full">
+          {/* Contenu textuel */}
+          <motion.div
+            className="w-full lg:w-1/2 z-10 hero-content"
+            variants={staggerContainer}
+            initial="initial"
+            animate={isLoaded ? "animate" : "initial"}
+          >
+            {/* Badge tendance */}
+            <motion.div
+              className="hero-subtitle inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium text-[#2d5016] border border-[#8cd139]/20 mb-4 sm:mb-6"
+              variants={fadeInUp}
+            >
+              <Zap size={14} className="text-[#8cd139] sm:size-16" />
+              Revolutionary IDP Solution
+            </motion.div>
+
+            <motion.h1
+              className="hero-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-[#1a1a1a] mb-6 sm:mb-8 leading-[1.1] tracking-tight"
+              variants={fadeInUp}
+            >
+              Transform your{' '}
+              <span className="relative">
+                <span className="bg-gradient-to-r from-[#8cd139] to-[#6ab526] bg-clip-text text-transparent">
+                  documents
+                </span>
+                <svg className="absolute -bottom-1 sm:-bottom-2 left-0 w-full h-2 sm:h-3" viewBox="0 0 200 12" preserveAspectRatio="none">
+                  <path d="M0,8 Q50,2 100,8 T200,8" stroke="#8cd139" strokeWidth="3" fill="none" opacity="0.6"/>
+                </svg>
+              </span>
+              {' '}into actionable{' '}
+              <span className="text-[#6366f1]">data</span>
+            </motion.h1>
+
+            {/* Graphique animé */}
+            <motion.div
+              className="hero-chart relative h-16 sm:h-20 mb-8 sm:mb-12 bg-white/40 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-white/20"
+              variants={fadeInUp}
+            >
+              <div className="relative h-full w-full">
+                <svg viewBox="0 0 100 40" preserveAspectRatio="none" className="w-full h-full">
+                  <defs>
+                    <linearGradient id="chartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#8cd139" stopOpacity="0.8" />
+                      <stop offset="50%" stopColor="#8cd139" stopOpacity="0.4" />
+                      <stop offset="100%" stopColor="#8cd139" stopOpacity="0.1" />
+                    </linearGradient>
+                    <filter id="glow">
+                      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                      <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                  </defs>
+
+                  <path
+                    d="M0,35 L8,32 L16,28 L24,30 L32,25 L40,20 L48,15 L56,12 L64,18 L72,14 L80,10 L88,8 L96,5 L100,3"
+                    stroke="#8cd139"
+                    strokeWidth="3"
+                    fill="none"
+                    filter="url(#glow)"
+                  />
+                  <path
+                    d="M0,35 L8,32 L16,28 L24,30 L32,25 L40,20 L48,15 L56,12 L64,18 L72,14 L80,10 L88,8 L96,5 L100,3 L100,40 L0,40 Z"
+                    fill="url(#chartGradient)"
+                  />
+
+                  {/* Points de données */}
+                  {[0,8,16,24,32,40,48,56,64,72,80,88,96,100].map((x, i) => {
+                    const y = [35,32,28,30,25,20,15,12,18,14,10,8,5,3][i];
+                    return (
+                      <circle
+                        key={i}
+                        cx={x}
+                        cy={y}
+                        r="2"
+                        fill="#ffffff"
+                        stroke="#8cd139"
+                        strokeWidth="2"
+                      />
+                    );
+                  })}
+                </svg>
+
+                <div className="absolute top-0 right-0 text-xs text-[#2d5016] font-semibold bg-[#8cd139]/20 px-2 py-1 rounded-md">
+                  +127% efficiency
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.p
+              className="hero-description text-[#4a5568] mb-6 sm:mb-8 text-base sm:text-lg lg:text-xl leading-relaxed max-w-2xl"
+              variants={fadeInUp}
+            >
+              AI-powered intelligent document scanning and information extraction system,
+              adapted to all sectors to automate your document processes.
+            </motion.p>
+
+            {/* Statistiques */}
+            <motion.div
+              className="hero-stats flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 lg:gap-6 mb-8 sm:mb-10"
+              variants={fadeInUp}
+            >
+              {[
+                { icon: Clock, value: "85%", label: "Time Saved" },
+                { icon: Shield, value: "99.9%", label: "Accuracy" },
+                { icon: Zap, value: "24/7", label: "Availability" }
+              ].map((stat, index) => (
+                <div key={index} className="flex items-center gap-3 bg-white/60 backdrop-blur-sm px-3 sm:px-4 py-3 rounded-lg sm:rounded-xl border border-white/30">
+                  <div className="p-2 bg-[#8cd139]/20 rounded-lg">
+                    <stat.icon size={18} className="text-[#2d5016] sm:size-20" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-[#1a1a1a] text-base sm:text-lg">{stat.value}</div>
+                    <div className="text-sm text-[#4a5568]">{stat.label}</div>
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+
+            {/* Boutons d'action */}
+            <motion.div
+              className="hero-buttons flex flex-col sm:flex-row gap-4 items-start"
+              variants={fadeInUp}
+            >
+              <motion.button
+                className="group bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] hover:from-[#5855eb] hover:to-[#7c3aed] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full flex items-center gap-3 font-semibold text-base sm:text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Play size={18} fill="white" className="sm:size-20" />
+                Request Free Demo
+                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform sm:size-18" />
+              </motion.button>
+
+              <motion.button
+                className="group bg-white/80 backdrop-blur-sm hover:bg-white border-2 border-[#8cd139] text-[#2d5016] px-6 sm:px-8 py-3 sm:py-4 rounded-full flex items-center gap-3 font-semibold text-base sm:text-lg transition-all duration-300 hover:shadow-lg"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                Discover Solution
+                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform sm:size-18" />
+              </motion.button>
+            </motion.div>
+          </motion.div>
+
+          {/* Section image IDP */}
+          <motion.div
+            className="w-full lg:w-1/2 mt-8 lg:mt-0 relative h-[400px] sm:h-[500px] lg:h-[600px] flex items-center justify-center hero-image-container"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1, delay: 0.5 }}
+          >
+            <div className="relative w-full max-w-md lg:max-w-lg mx-auto h-full flex items-center justify-center">
+              {/* Image d'illustration du processus IDP */}
+              <Image
+                src="/images/idp-process-illustration.png" // Assurez-vous d'avoir cette image dans public/images
+                alt="Intelligent Document Processing Flow"
+                width={700}
+                height={500}
+                className="w-full h-auto rounded-xl shadow-2xl relative z-10 border border-white/30 max-w-[90%] sm:max-w-[100%] lg:max-w-full"
+                priority
+              />
+
+              {/* Floating Elements - Ajustez les positions par rapport à l'image principale */}
+              <motion.div
+                className="absolute -bottom-4 sm:-bottom-6 -left-0 sm:-left-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-xl flex items-center gap-2 shadow-lg border border-white/20 floating-element"
+                initial={{ opacity: 0, y: 50, scale: 0.8 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: 1.2, duration: 0.8, type: "spring" }}
+                whileHover={{ scale: 1.05, rotate: -3 }}
+              >
+                <Clock size={16} className="text-[#8cd139]" />
+                <span className="font-medium text-[#2d5016] text-sm sm:text-base">Fast & Accurate</span>
+              </motion.div>
+
+              <motion.div
+                className="absolute -top-2 sm:-top-4 left-1/2 -translate-x-1/2 bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-lg border border-white/20 floating-element"
+                initial={{ opacity: 0, y: 50, scale: 0.8 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: 1.4, duration: 0.8, type: "spring" }}
+                whileHover={{ scale: 1.1, rotate: 5 }}
+              >
+                <div className="text-gray-500 text-xs font-medium mb-1">Processing Speed</div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[#8cd139] text-lg sm:text-xl lg:text-2xl font-bold">0.45s</span>
+                  <Zap size={14} className="text-[#f59e0b] sm:size-16" />
+                </div>
+                <div className="text-xs text-gray-400 mt-1">per document</div>
+              </motion.div>
+
+              <motion.div
+                className="absolute bottom-1/4 right-0 translate-x-1/3 bg-[#6366f1]/90 backdrop-blur-sm p-4 rounded-full shadow-lg border border-white/30 floating-element"
+                initial={{ opacity: 0, y: 50, scale: 0.8 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: 1.6, duration: 0.8, type: "spring" }}
+                whileHover={{ scale: 1.1, rotate: 5 }}
+              >
+                <FileCheck size={18} color="white" className="sm:size-20 lg:size-24" />
+              </motion.div>
+
+              <motion.div
+                className="absolute -bottom-4 right-1/2 translate-x-1/2 bg-[#8cd139]/90 backdrop-blur-sm p-3 rounded-full shadow-lg border border-white/30 floating-element"
+                initial={{ opacity: 0, y: 50, scale: 0.8 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: 1.9, duration: 0.8, type: "spring" }}
+                whileHover={{ scale: 1.1, rotate: -5 }}
+              >
+                <Shield size={14} color="white" className="sm:size-16 lg:size-20" />
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default HeroSection;
