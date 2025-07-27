@@ -9,6 +9,7 @@ RUN yarn config set network-timeout 300000 && \
     yarn config set network-retry 3 && \
     yarn install 
     #--frozen-lockfile
+RUN yarn add -D @next/bundle-analyzer
 
 COPY . .
 
