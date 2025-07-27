@@ -7,7 +7,8 @@ RUN apk add --no-cache libc6-compat curl ca-certificates
 COPY package.json yarn.lock ./
 RUN yarn config set network-timeout 300000 && \
     yarn config set network-retry 3 && \
-    yarn install --frozen-lockfile
+    yarn install 
+    #--frozen-lockfile
 
 COPY . .
 
