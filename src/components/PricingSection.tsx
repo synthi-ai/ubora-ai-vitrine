@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Check, Star, Zap, Shield, Users, Crown, ArrowRight, Calculator, Clock, Globe } from 'lucide-react';
-import gsap from 'gsap';
 
 const PricingComponent = () => {
   const [billingPeriod, setBillingPeriod] = useState('monthly');
@@ -120,35 +119,6 @@ const PricingComponent = () => {
       }
     }
   };
-
-  useEffect(() => {
-    if (isInView && sectionRef.current) {
-      // GSAP animations for entrance
-      const tl = gsap.timeline();
-      
-      tl.fromTo('.pricing-header',
-        { y: 50, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1, ease: "power3.out" }
-      )
-      .fromTo('.pricing-toggle',
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8, ease: "power2.out" },
-        "-=0.5"
-      )
-      .fromTo('.pricing-card',
-        { y: 60, opacity: 0, scale: 0.9 },
-        { 
-          y: 0, 
-          opacity: 1, 
-          scale: 1,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: "back.out(1.4)"
-        },
-        "-=0.3"
-      );
-    }
-  }, [isInView]);
 
   const getPrice = (plan: any) => {
     return billingPeriod === 'monthly' ? plan.monthlyPrice : plan.annualPrice;

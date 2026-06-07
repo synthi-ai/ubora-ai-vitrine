@@ -1,17 +1,14 @@
-'use client'; 
+'use client';
 
 import Header from '@/components/Header';
-import dynamic from 'next/dynamic'; 
-
-const Hero = dynamic(() => import('@/components/Hero'), { ssr: false });
-const AboutSection = dynamic(() => import('@/components/AboutSection'), { ssr: false });
-const IndustriesTransformationSection = dynamic(() => import('@/components/IndustriesTransformationSection'), { ssr: false });
-const FeaturesSection = dynamic(() => import('@/components/FeaturesSection'), { ssr: false });
-const UseCasesSection = dynamic(() => import('@/components/UseCasesSection'), { ssr: false });
-const TestimonialsSection = dynamic(() => import('@/components/TestimonialsSection'), { ssr: false });
-const PricingSection = dynamic(() => import('../components/PricingSection'), { ssr: false });
-const Footer = dynamic(() => import('@/components/Footer'), { ssr: false });
-const ClientWrapper = dynamic(() => import('@/components/ClientWrapper'), { ssr: false }); // Si vous utilisez ClientWrapper autour d'autres choses
+import Hero from '@/components/Hero';
+import AboutSection from '@/components/AboutSection';
+import IndustriesTransformationSection from '@/components/IndustriesTransformationSection';
+import FeaturesSection from '@/components/FeaturesSection';
+import UseCasesSection from '@/components/UseCasesSection';
+import TestimonialsSection from '@/components/TestimonialsSection';
+import PricingSection from '@/components/PricingSection';
+import Footer from '@/components/Footer';
 
 export default function Home() {
   return (
@@ -25,10 +22,6 @@ export default function Home() {
       <TestimonialsSection />
       <PricingSection />
       <Footer />
-      {/* Si ClientWrapper est un wrapper autour de votre contenu principal, il doit aussi être dynamique s'il utilise window */}
-      {/* <ClientWrapper>
-        ... votre contenu ...
-      </ClientWrapper> */}
     </>
   );
 }

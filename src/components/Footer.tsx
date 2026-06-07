@@ -4,22 +4,19 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { 
-  ArrowUp, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Linkedin, 
-  Twitter, 
-  Facebook, 
+import {
+  ArrowUp,
+  Linkedin,
+  Twitter,
+  Facebook,
   Youtube,
   Globe,
   Shield,
-  Zap,
   Heart,
   ChevronDown,
   ExternalLink
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const Footer = () => {
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -122,11 +119,11 @@ const Footer = () => {
     { icon: Youtube, href: "https://youtube.com/uboraai", label: "YouTube" }
   ];
 
-  const trustLogos = [
-    { name: "SOC 2", src: "/api/placeholder/80/40" },
-    { name: "ISO 27001", src: "/api/placeholder/80/40" },
-    { name: "GDPR", src: "/api/placeholder/80/40" },
-    { name: "HIPAA", src: "/api/placeholder/80/40" }
+  const trustBadges = [
+    { name: "SOC 2", icon: Shield },
+    { name: "ISO 27001", icon: Shield },
+    { name: "GDPR", icon: Globe },
+    { name: "HIPAA", icon: Shield },
   ];
 
   return (
@@ -250,11 +247,10 @@ const Footer = () => {
                       </button>
                       
                       {/* Links */}
-                      <div className={`space-y-3 ${
-                        openSections.includes(section.id) || window.innerWidth >= 1024 
-                          ? 'block' 
-                          : 'hidden lg:block'
-                      }`}>
+                      <div className={cn(
+                        "space-y-3",
+                        openSections.includes(section.id) ? "block" : "hidden lg:block"
+                      )}>
                         {section.links.map((link, linkIndex) => (
                           <div key={linkIndex}>
                             <Link
@@ -292,17 +288,12 @@ const Footer = () => {
                 </div>
               </div>
               
-              {/* Trust logos */}
-              <div className="flex items-center gap-6 opacity-60">
-                {trustLogos.map((logo, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <Image
-                      src={logo.src}
-                      alt={logo.name}
-                      width={60}
-                      height={30}
-                      className="filter brightness-0 invert opacity-60"
-                    />
+              {/* Trust badges */}
+              <div className="flex items-center gap-4 opacity-70">
+                {trustBadges.map((badge, index) => (
+                  <div key={index} className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-600 rounded-md">
+                    <badge.icon size={14} className="text-gray-400" />
+                    <span className="text-xs font-medium text-gray-300">{badge.name}</span>
                   </div>
                 ))}
               </div>
@@ -315,7 +306,7 @@ const Footer = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-2 text-gray-400 text-sm">
-                <span>© 2025 UboraAI Technologies Inc. All rights reserved worldwide.</span>
+                <span>© {new Date().getFullYear()} UboraAI Technologies Inc. All rights reserved worldwide.</span>
                 <span className="hidden lg:inline">•</span>
                 <span className="hidden lg:inline flex items-center gap-1">
                   Proudly engineered with <Heart size={14} className="text-red-500" /> in Cameroon

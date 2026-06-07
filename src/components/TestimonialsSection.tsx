@@ -1,10 +1,16 @@
-'use client';
+"use client";
 
-import React, { useState, useRef, useEffect } from 'react';
-import Image from 'next/image';
-import { motion, useInView, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Star, Quote, TrendingUp, Clock, Users, Award, Play } from 'lucide-react';
-import gsap from 'gsap';
+import React, { useState, useRef, useEffect } from "react";
+import { motion, useInView, AnimatePresence } from "framer-motion";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Star,
+  Quote,
+  Users,
+  Award,
+  Play,
+} from "lucide-react";
 
 interface Testimonial {
   id: number;
@@ -13,11 +19,10 @@ interface Testimonial {
   author: string;
   role: string;
   company: string;
-  avatar: string;
+  initials: string;
   rating: number;
   metrics: Record<string, string>;
   industry: string;
-  videoUrl?: string;
   featured: boolean;
 }
 
@@ -29,16 +34,11 @@ const testimonials: Testimonial[] = [
     author: "Dr. Amara Koné",
     role: "Chief Technology Officer",
     company: "AfricaTech Solutions",
-    avatar: "/api/placeholder/120/120",
+    initials: "AK",
     rating: 5,
-    metrics: {
-      efficiency: "+650%",
-      accuracy: "99.8%",
-      timeSaved: "7h/day"
-    },
+    metrics: { efficiency: "+650%", accuracy: "99.8%", timeSaved: "7h/day" },
     industry: "Technology",
-    videoUrl: "/testimonials/video1.mp4",
-    featured: true
+    featured: true,
   },
   {
     id: 2,
@@ -47,15 +47,11 @@ const testimonials: Testimonial[] = [
     author: "Samuel Mbeki",
     role: "Operations Director",
     company: "Central Bank of Cameroon",
-    avatar: "/api/placeholder/120/120",
+    initials: "SM",
     rating: 5,
-    metrics: {
-      roi: "+340%",
-      processing: "-85%",
-      satisfaction: "98%"
-    },
+    metrics: { roi: "+340%", processing: "-85%", satisfaction: "98%" },
     industry: "Banking",
-    featured: false
+    featured: false,
   },
   {
     id: 3,
@@ -64,15 +60,11 @@ const testimonials: Testimonial[] = [
     author: "Fatima Al-Rashid",
     role: "Digital Innovation Lead",
     company: "Maghreb Insurance Group",
-    avatar: "/api/placeholder/120/120",
+    initials: "FA",
     rating: 5,
-    metrics: {
-      languages: "12+",
-      speed: "+500%",
-      errors: "-95%"
-    },
+    metrics: { languages: "12+", speed: "+500%", errors: "-95%" },
     industry: "Insurance",
-    featured: false
+    featured: false,
   },
   {
     id: 4,
@@ -81,15 +73,11 @@ const testimonials: Testimonial[] = [
     author: "Jean-Claude Ndong",
     role: "Supply Chain Manager",
     company: "Port Authority of Douala",
-    avatar: "/api/placeholder/120/120",
+    initials: "JN",
     rating: 5,
-    metrics: {
-      automation: "100%",
-      compliance: "99.9%",
-      throughput: "+400%"
-    },
+    metrics: { automation: "100%", compliance: "99.9%", throughput: "+400%" },
     industry: "Logistics",
-    featured: true
+    featured: true,
   },
   {
     id: 5,
@@ -98,203 +86,150 @@ const testimonials: Testimonial[] = [
     author: "Marie Dubois",
     role: "Chief Financial Officer",
     company: "Tropical Foods Ltd",
-    avatar: "/api/placeholder/120/120",
+    initials: "MD",
     rating: 5,
-    metrics: {
-      integration: "100%",
-      uptime: "99.9%",
-      support: "5-star"
-    },
+    metrics: { integration: "100%", uptime: "99.9%", support: "5-star" },
     industry: "Agriculture",
-    featured: false
-  }
+    featured: false,
+  },
 ];
 
-interface TestimonialCardProps {
+const industryColors: Record<string, string> = {
+  Technology: "bg-blue-500",
+  Banking: "bg-green-500",
+  Insurance: "bg-purple-500",
+  Logistics: "bg-orange-500",
+  Agriculture: "bg-yellow-500",
+};
+
+function TestimonialCard({
+  testimonial,
+  isActive,
+}: {
   testimonial: Testimonial;
-  index: number;
   isActive: boolean;
-  isVisible: boolean;
-}
-
-const TestimonialCard = ({ testimonial, index, isActive, isVisible }: TestimonialCardProps) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [showVideo, setShowVideo] = useState(false);
-
-  useEffect(() => {
-    if (isVisible && cardRef.current) {
-      gsap.fromTo(cardRef.current,
-        {
-          opacity: 0,
-          y: 60,
-          scale: 0.95,
-          rotationX: -15,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          rotationX: 0,
-          duration: 0.8,
-          delay: index * 0.1,
-          ease: "power3.out",
-        }
-      );
-    }
-  }, [isVisible, index]);
-
-  const industryColors = {
-    Technology: "from-blue-500 to-cyan-500",
-    Banking: "from-green-500 to-emerald-500",
-    Insurance: "from-purple-500 to-violet-500",
-    Logistics: "from-orange-500 to-red-500",
-    Agriculture: "from-yellow-500 to-green-500"
-  };
-
+}) {
   return (
     <motion.div
-      ref={cardRef}
-      className={`relative bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden transform transition-all duration-500 ${isActive ? 'scale-105 shadow-2xl' : 'hover:scale-[1.02] hover:shadow-xl'
-        }`}
-      whileHover={{ y: -8 }}
-      layout
+      className={`relative bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden transition-shadow duration-300 ${
+        isActive ? "shadow-xl" : "hover:shadow-xl"
+      }`}
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
     >
-      {/* Featured Badge */}
+      {/* Featured badge */}
       {testimonial.featured && (
         <div className="absolute top-4 right-4 z-10">
-          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold text-white bg-gradient-to-r from-[#8cd139] to-[#6ab526]">
+          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold text-white bg-[#8cd139]">
             <Award size={12} />
             Featured
           </span>
         </div>
       )}
 
-      {/* Industry Tag */}
+      {/* Industry tag */}
       <div className="absolute top-4 left-4 z-10">
-        <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium text-white bg-gradient-to-r ${industryColors[testimonial.industry as keyof typeof industryColors]}`}>
+        <span
+          className={`inline-block px-3 py-1 rounded-full text-xs font-medium text-white ${
+            industryColors[testimonial.industry] || "bg-gray-500"
+          }`}
+        >
           {testimonial.industry}
         </span>
       </div>
 
-      <div className="p-8">
-        {/* Quote Icon & Quote */}
-        <div className="relative mb-6">
-          <Quote size={32} className="text-[#8cd139]/20 mb-4" />
+      <div className="p-8 pt-14">
+        {/* Quote */}
+        <div className="mb-6">
+          <Quote size={28} className="text-[#8cd139]/20 mb-3" />
           <h3 className="text-xl font-bold text-gray-900 mb-3 leading-tight">
             {testimonial.quote}
           </h3>
         </div>
 
-        {/* Testimonial Text */}
-        <p className="text-gray-600 mb-8 leading-relaxed text-base">
+        <p className="text-gray-600 mb-8 leading-relaxed">
           {testimonial.text}
         </p>
 
-        {/* Metrics Grid */}
+        {/* Metrics */}
         <div className="grid grid-cols-3 gap-3 mb-8">
-          {Object.entries(testimonial.metrics).map(([key, value], metricIndex) => (
-            <motion.div
+          {Object.entries(testimonial.metrics).map(([key, value]) => (
+            <div
               key={key}
-              className="text-center p-3 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-100"
-              whileHover={{ scale: 1.05 }}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 + metricIndex * 0.1 }}
+              className="text-center p-3 bg-gray-50 rounded-xl border border-gray-100"
             >
               <div className="text-[#8cd139] font-bold text-lg">{value}</div>
-              <div className="text-xs text-gray-500 capitalize font-medium">
-                {key.replace(/([A-Z])/g, ' $1').trim()}
+              <div className="text-xs text-gray-500 capitalize">
+                {key.replace(/([A-Z])/g, " $1").trim()}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        {/* Author Info */}
+        {/* Author */}
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <div className="relative w-14 h-14 mr-4">
-              <Image
-                src={testimonial.avatar}
-                alt={testimonial.author}
-                fill
-                className="rounded-full object-cover border-2 border-gray-100"
-              />
+            <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mr-4 text-gray-600 font-semibold text-sm">
+              {testimonial.initials}
             </div>
             <div>
-              <p className="font-bold text-gray-900 text-sm">{testimonial.author}</p>
-              <p className="text-gray-600 text-sm">{testimonial.role}</p>
-              <p className="text-[#8cd139] text-sm font-medium">{testimonial.company}</p>
+              <p className="font-bold text-gray-900 text-sm">
+                {testimonial.author}
+              </p>
+              <p className="text-gray-500 text-sm">{testimonial.role}</p>
+              <p className="text-[#8cd139] text-sm font-medium">
+                {testimonial.company}
+              </p>
             </div>
           </div>
-
-          {/* Rating */}
           <div className="flex flex-col items-end">
-            <div className="flex items-center mb-1">
+            <div className="flex">
               {[...Array(testimonial.rating)].map((_, i) => (
-                <Star key={i} size={16} className="text-yellow-400 fill-current" />
+                <Star
+                  key={i}
+                  size={14}
+                  className="text-yellow-400 fill-current"
+                />
               ))}
             </div>
-            <span className="text-xs text-gray-500 font-medium">
+            <span className="text-xs text-gray-400 mt-1">
               {testimonial.rating}.0/5.0
             </span>
           </div>
         </div>
-
-        {/* Video Testimonial Button */}
-        {testimonial.videoUrl && (
-          <motion.button
-            className="mt-6 w-full flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-[#8cd139] to-[#6ab526] text-white rounded-lg font-semibold text-sm hover:shadow-lg transition-all duration-300"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => setShowVideo(true)}
-          >
-            <Play size={16} />
-            Watch Video Testimonial
-          </motion.button>
-        )}
       </div>
     </motion.div>
   );
-};
+}
 
 export default function TestimonialsCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [autoPlay, setAutoPlay] = useState(true);
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const [windowWidth, setWindowWidth] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1024);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // Auto-play functionality
   useEffect(() => {
     if (autoPlay && isInView) {
       intervalRef.current = setInterval(() => {
         setCurrentIndex((prev) => (prev + 1) % testimonials.length);
       }, 5000);
-    } else {
+    } else if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }
-
-    return () => clearInterval(intervalRef.current);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
   }, [autoPlay, isInView]);
 
-  const handleNavigation = (direction: 'prev' | 'next') => {
+  const handleNav = (direction: "prev" | "next") => {
     setAutoPlay(false);
-    const newIndex = direction === 'next'
-      ? (currentIndex + 1) % testimonials.length
-      : (currentIndex - 1 + testimonials.length) % testimonials.length;
-    setCurrentIndex(newIndex);
-
-    // Resume autoplay after 10 seconds
+    setCurrentIndex((prev) =>
+      direction === "next"
+        ? (prev + 1) % testimonials.length
+        : (prev - 1 + testimonials.length) % testimonials.length
+    );
     setTimeout(() => setAutoPlay(true), 10000);
   };
 
@@ -304,196 +239,108 @@ export default function TestimonialsCarousel() {
     setTimeout(() => setAutoPlay(true), 10000);
   };
 
-  // Calculate visible testimonials (show 3 at a time on desktop)
-  const getVisibleTestimonials = () => {
-    const visibleCount = windowWidth >= 1024 ? 3 : 1;
-    const visibleTestimonials = [];
-
-    for (let i = 0; i < visibleCount; i++) {
-      const index = (currentIndex + i) % testimonials.length;
-      visibleTestimonials.push({
-        ...testimonials[index],
-        displayIndex: i,
-        isActive: i === 1 || visibleCount === 1
-      });
+  // Show 3 on desktop, 1 on mobile — handled via CSS grid
+  const getVisible = () => {
+    const result = [];
+    for (let i = 0; i < 3; i++) {
+      const idx = (currentIndex + i) % testimonials.length;
+      result.push({ ...testimonials[idx], isActive: i === 1 });
     }
-
-    return visibleTestimonials;
-  };
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.3
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 50, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 10
-      }
-    }
+    return result;
   };
 
   return (
     <section
       ref={sectionRef}
-      className="relative py-16 sm:py-20 lg:py-24 bg-gradient-to-br from-gray-50 via-white to-gray-50 overflow-hidden"
       id="testimonials"
+      className="relative py-20 lg:py-28 bg-gray-50 overflow-hidden"
     >
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-r from-green-200/20 to-blue-200/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-purple-200/20 to-pink-200/20 rounded-full blur-3xl"></div>
-      </div>
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header Section */}
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
         <motion.div
-          className="text-center mb-16 lg:mb-20"
-          variants={containerVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
         >
-          <motion.div
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-[#8cd139]/20 to-[#6ab526]/20 px-4 py-2 rounded-full text-sm font-medium text-[#2d5016] mb-6"
-            variants={itemVariants}
-          >
-            <Users size={16} className="text-[#8cd139]" />
-            Customer Success Stories
-          </motion.div>
-
-          <motion.h2
-            className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 mb-6 leading-tight"
-            variants={itemVariants}
-          >
-            Trusted by leading{' '}
-            <span className="relative">
-              <span className="bg-gradient-to-r from-[#8cd139] to-[#6ab526] bg-clip-text text-transparent">
-                African businesses
-              </span>
-              <svg className="absolute -bottom-2 left-0 w-full h-3" viewBox="0 0 200 12" preserveAspectRatio="none">
-                <path d="M0,8 Q50,2 100,8 T200,8" stroke="#8cd139" strokeWidth="3" fill="none" opacity="0.6" />
-              </svg>
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-gray-200 bg-white mb-4">
+            <Users size={14} className="text-[#8cd139]" />
+            <span className="text-sm font-medium text-gray-600">
+              Customer Success Stories
             </span>
-          </motion.h2>
-
-          <motion.p
-            className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
-            variants={itemVariants}
-          >
-            Discover how organizations across Africa are transforming their document workflows
-            and achieving remarkable results with UboraAI&apos;s intelligent automation platform.
-          </motion.p>
+          </div>
+          <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-4">
+            Trusted by leading{" "}
+            <span className="text-[#8cd139]">African businesses</span>
+          </h2>
+          <p className="text-lg text-gray-500 max-w-3xl mx-auto">
+            Discover how organizations across Africa are transforming their
+            document workflows and achieving remarkable results with UboraAI.
+          </p>
         </motion.div>
 
-        {/* Testimonials Carousel */}
+        {/* Carousel */}
         <div className="relative">
-          <motion.div
-            className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <AnimatePresence mode="wait">
-              {getVisibleTestimonials().map((testimonial, index) => (
-                <TestimonialCard
-                  key={`${testimonial.id}-${currentIndex}`}
-                  testimonial={testimonial}
-                  index={index}
-                  isActive={testimonial.isActive}
-                  isVisible={isInView}
-                />
-              ))}
-            </AnimatePresence>
-          </motion.div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {getVisible().map((t) => (
+              <TestimonialCard
+                key={`${t.id}-${currentIndex}`}
+                testimonial={t}
+                isActive={t.isActive}
+              />
+            ))}
+          </div>
 
-          {/* Navigation Buttons */}
+          {/* Navigation */}
           <div className="flex justify-center items-center gap-4 mt-12">
-            <motion.button
-              onClick={() => handleNavigation('prev')}
-              className="p-3 rounded-full bg-white shadow-lg border border-gray-200 hover:shadow-xl hover:bg-gray-50 transition-all duration-300 group"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+            <button
+              onClick={() => handleNav("prev")}
+              className="p-3 rounded-full bg-white shadow-md border border-gray-200 hover:shadow-lg transition-shadow"
             >
-              <ChevronLeft size={20} className="text-gray-600 group-hover:text-[#8cd139] transition-colors" />
-            </motion.button>
+              <ChevronLeft size={20} className="text-gray-600" />
+            </button>
 
-            {/* Pagination Dots */}
             <div className="flex gap-2">
               {testimonials.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => goToSlide(index)}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentIndex
-                      ? 'bg-[#8cd139] scale-125'
-                      : 'bg-gray-300 hover:bg-gray-400'
-                    }`}
+                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                    index === currentIndex
+                      ? "bg-[#8cd139] scale-125"
+                      : "bg-gray-300 hover:bg-gray-400"
+                  }`}
                 />
               ))}
             </div>
 
-            <motion.button
-              onClick={() => handleNavigation('next')}
-              className="p-3 rounded-full bg-[#8cd139] shadow-lg hover:shadow-xl hover:bg-[#7bc234] transition-all duration-300 group"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+            <button
+              onClick={() => handleNav("next")}
+              className="p-3 rounded-full bg-[#8cd139] shadow-md hover:bg-[#7bc234] transition-colors"
             >
               <ChevronRight size={20} className="text-white" />
-            </motion.button>
+            </button>
           </div>
 
-          {/* Auto-play indicator */}
+          {/* Auto-play toggle */}
           <div className="flex justify-center mt-6">
             <button
               onClick={() => setAutoPlay(!autoPlay)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${autoPlay
-                  ? 'bg-[#8cd139]/10 text-[#2d5016] border border-[#8cd139]/20'
-                  : 'bg-gray-100 text-gray-600 border border-gray-200'
-                }`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                autoPlay
+                  ? "bg-[#8cd139]/10 text-[#2d5016] border border-[#8cd139]/20"
+                  : "bg-gray-100 text-gray-600 border border-gray-200"
+              }`}
             >
-              <div className={`w-2 h-2 rounded-full ${autoPlay ? 'bg-[#8cd139]' : 'bg-gray-400'}`} />
-              {autoPlay ? 'Auto-play ON' : 'Auto-play OFF'}
+              <div
+                className={`w-2 h-2 rounded-full ${
+                  autoPlay ? "bg-[#8cd139]" : "bg-gray-400"
+                }`}
+              />
+              {autoPlay ? "Auto-play ON" : "Auto-play OFF"}
             </button>
           </div>
         </div>
-
-        {/* Stats Section 
-        <motion.div 
-          className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-20"
-          initial={{ opacity: 0, y: 40 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-          transition={{ delay: 1, duration: 0.8 }}
-        >
-          {[
-            { icon: TrendingUp, value: "500%", label: "Average ROI", color: "text-green-600" },
-            { icon: Clock, value: "85%", label: "Time Reduction", color: "text-blue-600" },
-            { icon: Users, value: "200+", label: "Happy Customers", color: "text-purple-600" },
-            { icon: Award, value: "99.8%", label: "Satisfaction Rate", color: "text-orange-600" }
-          ].map((stat, index) => (
-            <motion.div
-              key={index}
-              className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
-              whileHover={{ scale: 1.05, y: -5 }}
-            >
-              <div className="inline-flex p-3 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 mb-4">
-                <stat.icon size={24} className={stat.color} />
-              </div>
-              <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{stat.value}</div>
-              <div className="text-sm text-gray-600 font-medium">{stat.label}</div>
-            </motion.div>
-          ))}
-        </motion.div> */}
       </div>
     </section>
   );

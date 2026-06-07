@@ -1,17 +1,22 @@
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import { Inter } from 'next/font/google';
+import type { Metadata } from 'next';
 import './globals.css';
 
-export default function RootLayout({ children }) {
+const inter = Inter({ subsets: ['latin'] });
+
+export const metadata: Metadata = {
+  title: 'UboraAI - Intelligent Document Processing Platform',
+  description:
+    'Transform documents into actionable data with AI-powered intelligent document processing. Automate invoice processing, ID verification, contract analysis and more.',
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr">
+    <html lang="en" className={inter.className}>
       <body className="min-h-screen flex flex-col">
-        {/*<Header />*/}
-        <div className="pt-10"></div> 
         <main className="flex-grow">
           {children}
         </main>
-       {/*<Footer /> */}
       </body>
     </html>
   );
