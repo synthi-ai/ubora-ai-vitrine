@@ -1,237 +1,266 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
-import {
-  ArrowRight,
-  Building2,
-  Heart,
-  Scale,
-  Truck,
-  Users,
-  TreePine,
-  GraduationCap,
-  Wheat,
-  ShoppingBag,
-} from "lucide-react";
+import Image from "next/image";
 
-const industries = [
+/* ------------------------------------------------------------------ */
+/* Data — one slide per industry                                       */
+/* ------------------------------------------------------------------ */
+
+const slides = [
   {
-    icon: Building2,
-    title: "Banking & Financial Services",
+    eyebrow: "Gallery of Customer Achievement",
+    company: "Central Bank",
     description:
-      "Automate loan processing, fraud detection, and regulatory compliance with AI-powered document analysis.",
-    stats: "90% faster processing",
-    metrics: { automation: "97%", accuracy: "99.9%", volume: "50K+", roi: "+420%" },
+      "Processing thousands of compliance documents daily was overwhelming the Central Bank's operations team. UboraAI automated 97% of document workflows — cutting processing time by 85% and saving over 15,000 work hours annually.",
+    cta: "Read the full story",
+    ctaHref: "#",
+    image: "/photo_2026-06-07 17.36.44.jpeg",
   },
   {
-    icon: Heart,
-    title: "Healthcare & Medical",
+    eyebrow: "Gallery of Customer Achievement",
+    company: "AfricaTech",
     description:
-      "Streamline patient records, medical imaging reports, and insurance claims with intelligent extraction.",
-    stats: "75% paperwork reduction",
-    metrics: { automation: "92%", accuracy: "99.7%", volume: "30K+", roi: "+380%" },
+      "AfricaTech needed to scale invoice processing across 12 African markets. With UboraAI's multilingual OCR, they achieved a 650% efficiency gain and 99.8% accuracy — transforming their entire finance operation.",
+    cta: "Watch the video",
+    ctaHref: "#",
+    image: "/photo_2026-06-07 17.36.47.jpeg",
   },
   {
-    icon: GraduationCap,
-    title: "Education & Research",
+    eyebrow: "Gallery of Customer Achievement",
+    company: "Maghreb Insurance",
     description:
-      "Digitize enrollment forms, transcripts, and research documents with high-accuracy OCR processing.",
-    stats: "85% faster enrollment",
-    metrics: { automation: "89%", accuracy: "98.5%", volume: "25K+", roi: "+340%" },
+      "Claims processing in French, English, and Arabic was slowing down Maghreb Insurance's onboarding. UboraAI's intelligent extraction reduced errors by 95% and accelerated processing speed by 500%.",
+    cta: "Watch the video",
+    ctaHref: "#",
+    image: "/photo_2026-06-07 17.36.53.jpeg",
   },
   {
-    icon: Users,
-    title: "Government & Public Sector",
+    eyebrow: "Gallery of Customer Achievement",
+    company: "Port Authority",
     description:
-      "Modernize citizen services with automated identity verification, permit processing, and records management.",
-    stats: "80% efficiency boost",
-    metrics: { automation: "94%", accuracy: "99.2%", volume: "40K+", roi: "+360%" },
+      "From customs forms to shipping manifests, the Port Authority of Douala faced 100,000+ documents monthly. UboraAI delivered 100% automation and 99.9% compliance — with zero manual sorting.",
+    cta: "Watch the video",
+    ctaHref: "#",
+    image: "/photo_2026-06-07 17.36.58.jpeg",
   },
   {
-    icon: Wheat,
-    title: "Agriculture & Food",
+    eyebrow: "Gallery of Customer Achievement",
+    company: "Tropical Foods",
     description:
-      "Process land titles, export certificates, and quality inspection documents at scale.",
-    stats: "70% faster claims",
-    metrics: { automation: "85%", accuracy: "97.8%", volume: "20K+", roi: "+290%" },
+      "Tropical Foods integrated UboraAI with their existing SAP system in under a week. The result? 100% integration coverage, 99.9% uptime, and a 5-star support experience that exceeded every expectation.",
+    cta: "Read the full story",
+    ctaHref: "#",
+    image: "/photo_2026-06-07 17.37.04.jpeg",
   },
   {
-    icon: TreePine,
-    title: "Mining & Resources",
+    eyebrow: "Gallery of Customer Achievement",
+    company: "MediCare Africa",
     description:
-      "Automate environmental compliance reports, geological surveys, and resource tracking documentation.",
-    stats: "95% compliance accuracy",
-    metrics: { automation: "91%", accuracy: "99.8%", volume: "15K+", roi: "+450%" },
+      "Patient records, imaging reports, and insurance claims were buried in paper. MediCare Africa deployed UboraAI to digitize 30,000+ documents monthly — cutting paperwork by 75% and freeing clinicians to focus on care.",
+    cta: "Watch the video",
+    ctaHref: "#",
+    image: "/photo_2026-06-07 17.36.44.jpeg",
   },
   {
-    icon: Truck,
-    title: "Transport & Logistics",
+    eyebrow: "Gallery of Customer Achievement",
+    company: "EduConnect",
     description:
-      "Streamline customs declarations, shipping manifests, and supply chain documentation.",
-    stats: "60% faster customs",
-    metrics: { automation: "88%", accuracy: "98.9%", volume: "35K+", roi: "+310%" },
-  },
-  {
-    icon: ShoppingBag,
-    title: "Retail & Commerce",
-    description:
-      "Automate purchase orders, inventory documents, and vendor invoice processing.",
-    stats: "50% manual work reduction",
-    metrics: { automation: "83%", accuracy: "97.5%", volume: "45K+", roi: "+280%" },
-  },
-  {
-    icon: Scale,
-    title: "Legal & Justice",
-    description:
-      "Accelerate contract review, case document analysis, and regulatory filing with AI-assisted extraction.",
-    stats: "65% faster reviews",
-    metrics: { automation: "86%", accuracy: "99.1%", volume: "18K+", roi: "+370%" },
+      "Enrollment season meant chaos for EduConnect — thousands of transcripts, forms, and IDs to process. UboraAI's high-accuracy OCR made enrollment 85% faster and eliminated manual data entry entirely.",
+    cta: "Get the full story",
+    ctaHref: "#",
+    image: "/photo_2026-06-07 17.36.47.jpeg",
   },
 ];
 
+/* ------------------------------------------------------------------ */
+/* Component                                                           */
+/* ------------------------------------------------------------------ */
+
 export default function IndustriesTransformationSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
-  const [selected, setSelected] = useState(0);
+  const [active, setActive] = useState(0);
+  const ref = useRef<HTMLElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.15 });
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const startAutoplay = useCallback(() => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => {
+      setActive((prev) => (prev + 1) % slides.length);
+    }, 5000);
+  }, []);
 
   useEffect(() => {
-    if (!isInView) return;
-    const interval = setInterval(() => {
-      setSelected((prev) => (prev + 1) % industries.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [isInView]);
+    if (isInView) startAutoplay();
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [isInView, startAutoplay]);
 
-  const current = industries[selected];
+  const navigate = (dir: "prev" | "next") => {
+    setActive((prev) =>
+      dir === "next"
+        ? (prev + 1) % slides.length
+        : (prev - 1 + slides.length) % slides.length
+    );
+    startAutoplay();
+  };
+
+  const current = slides[active];
+  const pad = (n: number) => String(n).padStart(2, "0");
 
   return (
     <section
-      ref={sectionRef}
+      ref={ref}
       id="industries"
-      className="relative bg-gray-950 py-20 lg:py-28 text-white overflow-hidden"
+      className="relative bg-[#e8f0f4] overflow-hidden"
     >
-      {/* Subtle gradient */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_rgba(140,209,57,0.06)_0%,_transparent_60%)]" />
+      <div className="max-w-[1920px] mx-auto">
+        {/* ---- Wrapper: flex row on desktop, column-reverse on mobile ---- */}
+        <div className="flex flex-col-reverse lg:flex-row items-center min-h-[620px]">
+          {/* ============================================= */}
+          {/* LEFT — Text content slider (≈43%)             */}
+          {/* ============================================= */}
+          <div className="w-full lg:w-[43%] px-6 sm:px-10 lg:pl-[clamp(40px,12vw,224px)] lg:pr-6 py-12 lg:py-24">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={active}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                {/* Eyebrow */}
+                <p className="text-sm font-semibold text-[#8cd139] mb-6 tracking-wide uppercase">
+                  {current.eyebrow}
+                </p>
 
-      <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#8cd139]/30 bg-[#8cd139]/10 mb-4">
-            <span className="text-sm font-medium text-[#8cd139]">
-              Industry Solutions
-            </span>
-          </div>
-          <h2 className="text-3xl lg:text-5xl font-bold mb-4">
-            Transforming industries{" "}
-            <span className="text-[#8cd139]">across Africa</span>
-          </h2>
-          <p className="text-lg text-gray-400 max-w-3xl mx-auto">
-            Our AI-powered document processing platform serves organizations
-            across 9+ industries, delivering automation that drives real results.
-          </p>
-        </motion.div>
+                {/* Company name — BIG */}
+                <h2 className="text-5xl sm:text-6xl lg:text-7xl xl:text-[96px] font-extrabold text-gray-900 leading-[1] mb-6">
+                  {current.company}
+                </h2>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-          {/* Left: Industry selector grid */}
-          <motion.div
-            className="grid grid-cols-3 gap-3"
-            initial={{ opacity: 0, x: -20 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            {industries.map((industry, index) => {
-              const isSelected = index === selected;
-              return (
-                <button
-                  key={industry.title}
-                  onClick={() => setSelected(index)}
-                  className={`flex flex-col items-center gap-2 p-4 rounded-xl border transition-all duration-300 ${
-                    isSelected
-                      ? "bg-[#8cd139]/10 border-[#8cd139]/40 shadow-lg shadow-[#8cd139]/5"
-                      : "bg-gray-900/50 border-gray-800 hover:border-gray-700"
-                  }`}
+                {/* Description */}
+                <p className="text-base lg:text-lg text-gray-700 leading-relaxed mb-6 max-w-lg">
+                  {current.description}
+                </p>
+
+                {/* CTA link */}
+                <a
+                  href={current.ctaHref}
+                  className="inline-flex items-center gap-2 text-gray-900 font-medium group/link hover:text-[#8cd139] transition-colors"
                 >
-                  <div
-                    className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
-                      isSelected ? "bg-[#8cd139] text-white" : "bg-gray-800 text-gray-400"
-                    }`}
-                  >
-                    <industry.icon size={20} />
-                  </div>
-                  <span
-                    className={`text-xs font-medium text-center leading-tight ${
-                      isSelected ? "text-white" : "text-gray-500"
-                    }`}
-                  >
-                    {industry.title.split(" & ")[0]}
+                  <span className="underline underline-offset-4 decoration-gray-400 group-hover/link:decoration-[#8cd139]">
+                    {current.cta}
                   </span>
-                </button>
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    className="transition-transform group-hover/link:translate-x-1"
+                  >
+                    <path
+                      d="M19.6 11L16.34 7.7a1 1 0 011.42-1.41l4.9 4.96a1 1 0 01-.01 1.45l-4.9 5.03a1 1 0 01-1.42-1.41L19.6 13H2a1 1 0 110-2h17.6z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </a>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* ---- Navigation: arrows + counter ---- */}
+            <div className="flex items-center gap-6 mt-12 lg:mt-16">
+              {/* Prev arrow */}
+              <button
+                onClick={() => navigate("prev")}
+                className="w-10 h-10 flex items-center justify-center hover:opacity-70 transition-opacity"
+                aria-label="Previous"
+              >
+                <span className="block w-3 h-3 border-t-2 border-l-2 border-gray-900 rotate-[-45deg]" />
+              </button>
+
+              {/* Counter: 01 ─── 07 */}
+              <div className="flex items-center gap-3 text-sm font-bold text-gray-900 select-none">
+                <span>{pad(active + 1)}</span>
+                <span className="block w-16 sm:w-24 h-px bg-gray-400" />
+                <span className="text-gray-400">{pad(slides.length)}</span>
+              </div>
+
+              {/* Next arrow */}
+              <button
+                onClick={() => navigate("next")}
+                className="w-10 h-10 flex items-center justify-center hover:opacity-70 transition-opacity"
+                aria-label="Next"
+              >
+                <span className="block w-3 h-3 border-t-2 border-r-2 border-gray-900 rotate-[45deg]" />
+              </button>
+            </div>
+          </div>
+
+          {/* ============================================= */}
+          {/* RIGHT — Image carousel (≈57%)                 */}
+          {/* ============================================= */}
+          <div className="w-full lg:w-[57%] relative h-[300px] sm:h-[400px] lg:h-[620px]">
+            {/* Show active + next peek */}
+            {slides.map((slide, index) => {
+              const isActive = index === active;
+              const isNext = index === (active + 1) % slides.length;
+              const isVisible = isActive || isNext;
+
+              if (!isVisible) return null;
+
+              return (
+                <div
+                  key={index}
+                  className="absolute inset-0 transition-opacity duration-500"
+                  style={{
+                    opacity: isActive ? 1 : 0.4,
+                    zIndex: isActive ? 2 : 1,
+                    transform: isNext
+                      ? "translateX(60%) scale(0.92)"
+                      : "translateX(0) scale(1)",
+                    transition:
+                      "opacity 500ms ease, transform 500ms ease",
+                  }}
+                >
+                  {/* Image */}
+                  <div className="relative w-full h-full overflow-hidden">
+                    <Image
+                      src={slide.image}
+                      alt={slide.company}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 1024px) 100vw, 57vw"
+                      priority={index === 0}
+                    />
+
+                    {/* Dark gradient overlay */}
+                    <div
+                      className="absolute inset-0 transition-all duration-500"
+                      style={{
+                        background: isActive
+                          ? "rgba(23, 33, 37, 0.2)"
+                          : "rgba(23, 33, 37, 0.75)",
+                      }}
+                    />
+
+                    {/* Company logo / name overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center z-10">
+                      <span
+                        className="text-white font-bold text-3xl sm:text-4xl lg:text-5xl tracking-wider select-none transition-opacity duration-500"
+                        style={{ opacity: isActive ? 1 : 0.5 }}
+                      >
+                        {slide.company}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               );
             })}
-          </motion.div>
-
-          {/* Right: Detail panel */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={selected}
-              className="bg-gray-900 rounded-2xl border border-gray-800 p-8"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-[#8cd139] flex items-center justify-center">
-                  <current.icon size={24} className="text-white" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-white">{current.title}</h3>
-                  <p className="text-sm text-[#8cd139] font-medium">{current.stats}</p>
-                </div>
-              </div>
-
-              <p className="text-gray-400 mb-6 leading-relaxed">
-                {current.description}
-              </p>
-
-              {/* Metrics */}
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                {Object.entries(current.metrics).map(([key, value]) => (
-                  <div
-                    key={key}
-                    className="bg-gray-950 rounded-xl p-4 border border-gray-800"
-                  >
-                    <div className="text-2xl font-bold text-white">{value}</div>
-                    <div className="text-xs text-gray-500 capitalize">{key}</div>
-                  </div>
-                ))}
-              </div>
-
-              <button className="w-full flex items-center justify-center gap-2 py-3 px-6 rounded-lg font-semibold bg-[#8cd139] hover:bg-[#7bc234] text-white transition-colors">
-                Learn More
-                <ArrowRight size={18} />
-              </button>
-            </motion.div>
-          </AnimatePresence>
+          </div>
         </div>
-
-        {/* Bottom CTA */}
-        <motion.div
-          className="mt-16 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
-          <p className="text-gray-500 text-sm">
-            200+ organizations across Africa trust UboraAI for document automation
-          </p>
-        </motion.div>
       </div>
     </section>
   );

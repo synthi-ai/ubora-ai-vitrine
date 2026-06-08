@@ -1,21 +1,31 @@
-'use client'; // Move this to the TOP
+'use client';
 
-import AboutSection from './AboutSection';
-import FeaturesSection from './FeaturesSection';
 import Hero from './Hero';
+import LogoStrip from './LogoStrip';
+import SplitFeatures from './SplitFeatures';
+import TabbedPlatform from './TabbedPlatform';
+import MetricsSection from './MetricsSection';
+import CaseStudies from './CaseStudies';
+import ProductGrid from './ProductGrid';
 import IndustriesTransformationSection from './IndustriesTransformationSection';
-import TestimonialsSection from './TestimonialsSection';
-import UseCasesSection from './UseCasesSection';
+import FAQSection from './FAQSection';
+import ResourcesGrid from './ResourcesGrid';
+import CTABanner from './CTABanner';
 
 export default function ClientLayout() {
   return (
     <>
       <Hero />
-      <AboutSection />
+      <LogoStrip />
+      <SplitFeatures />
+      <TabbedPlatform />
+      <MetricsSection />
+      <CaseStudies />
+      <ProductGrid />
       <IndustriesTransformationSection />
-      <FeaturesSection />
-      <UseCasesSection />
-      <TestimonialsSection />
+      <FAQSection />
+      <ResourcesGrid />
+      <CTABanner />
     </>
   );
 }
