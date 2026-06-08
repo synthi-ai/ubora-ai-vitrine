@@ -29,13 +29,6 @@ export default function Hero() {
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
           >
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#8cd139]/30 bg-[#8cd139]/10 mb-6">
-              <span className="text-sm font-medium text-[#8cd139]">
-                Intelligent Document Processing
-              </span>
-            </div>
-
             {/* Heading */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
               Transform{" "}
@@ -64,7 +57,7 @@ export default function Hero() {
             <p className="text-lg text-gray-400 max-w-xl mx-auto lg:mx-0 mb-8">
               Automate document workflows with AI-powered extraction, classification,
               and validation. Reduce manual processing by 90% while achieving
-              99.8% accuracy.
+              best-in-class accuracy.
             </p>
 
             {/* CTAs */}

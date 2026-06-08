@@ -11,14 +11,6 @@ import {
   Clock,
 } from "lucide-react";
 import { motion, useInView } from "framer-motion";
-import AnimatedNumbers from "react-animated-numbers";
-
-const stats = [
-  { value: 99.8, suffix: "%", label: "Accuracy" },
-  { value: 10, suffix: "x", label: "Faster Processing" },
-  { value: 200, suffix: "+", label: "Document Types" },
-  { value: 50, suffix: "+", label: "Languages" },
-];
 
 const checklistItems = [
   "End-to-end document automation pipeline",
@@ -71,54 +63,13 @@ export default function AboutSection() {
       className="bg-white py-20 lg:py-28"
     >
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Stats Bar */}
-        <motion.div
-          className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-20"
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-        >
-          {stats.map((stat) => (
-            <div key={stat.label} className="text-center">
-              <div className="flex items-baseline justify-center gap-0.5">
-                <span className="text-4xl lg:text-5xl font-bold text-gray-900">
-                  {isInView ? (
-                    <AnimatedNumbers
-                      includeComma
-                      configs={() => ({
-                        mass: 1,
-                        tension: 120,
-                        friction: 20,
-                      })}
-                      animateToNumber={stat.value}
-                    />
-                  ) : (
-                    "0"
-                  )}
-                </span>
-                <span className="text-2xl lg:text-3xl font-bold text-[#8cd139]">
-                  {stat.suffix}
-                </span>
-              </div>
-              <p className="mt-2 text-sm text-gray-500 font-medium">
-                {stat.label}
-              </p>
-            </div>
-          ))}
-        </motion.div>
-
         {/* Header */}
         <motion.div
           className="text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.1 }}
+          transition={{ duration: 0.5 }}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-gray-200 bg-gray-50 mb-4">
-            <span className="text-sm font-medium text-gray-600">
-              How It Works
-            </span>
-          </div>
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
             Transforming documents into{" "}
             <span className="text-[#8cd139]">actionable insights</span>
@@ -131,10 +82,10 @@ export default function AboutSection() {
 
         {/* Process Flow Illustration */}
         <motion.div
-          className="mb-20"
+          className="mb-16"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
         >
           <div className="rounded-2xl border border-gray-100 shadow-xl overflow-hidden">
             <Image
@@ -147,12 +98,41 @@ export default function AboutSection() {
           </div>
         </motion.div>
 
+        {/* Dark variant of the process illustration */}
+        <motion.div
+          className="mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5, delay: 0.15 }}
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="rounded-2xl border border-gray-100 shadow-lg overflow-hidden">
+              <Image
+                src="/photo_2026-06-07 17.36.53.jpeg"
+                alt="IDP processing flow - dark variant with document classification steps"
+                width={700}
+                height={400}
+                className="w-full h-auto"
+              />
+            </div>
+            <div className="rounded-2xl border border-gray-100 shadow-lg overflow-hidden">
+              <Image
+                src="/photo_2026-06-07 17.36.47.jpeg"
+                alt="Document extraction and validation pipeline overview"
+                width={700}
+                height={400}
+                className="w-full h-auto"
+              />
+            </div>
+          </div>
+        </motion.div>
+
         {/* Video Section */}
         <motion.div
           className="mb-20"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.3 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
         >
           <div className="relative rounded-2xl overflow-hidden shadow-xl bg-gray-900">
             <video
@@ -164,7 +144,6 @@ export default function AboutSection() {
             >
               <source src="/videos/demo-video.mp4" type="video/mp4" />
             </video>
-            {/* Play / Pause overlay */}
             <button
               onClick={toggleVideo}
               className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/20 transition-colors group"
@@ -187,7 +166,7 @@ export default function AboutSection() {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.4 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
           >
             <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
               About UboraAI
@@ -217,7 +196,7 @@ export default function AboutSection() {
             className="space-y-4"
             initial={{ opacity: 0, x: 20 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.5 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
           >
             <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
               Why Choose UboraAI?
