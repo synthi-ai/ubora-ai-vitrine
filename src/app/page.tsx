@@ -13,6 +13,7 @@ import FAQSection from '@/components/FAQSection';
 import ResourcesGrid from '@/components/ResourcesGrid';
 import CTABanner from '@/components/CTABanner';
 import Footer from '@/components/Footer';
+import WaveBackground from '@/components/WaveBackground';
 
 // Hero uses react-type-animation which requires browser globals
 const Hero = dynamic(() => import('@/components/Hero'), { ssr: false });
@@ -20,6 +21,7 @@ const Hero = dynamic(() => import('@/components/Hero'), { ssr: false });
 export default function Home() {
   return (
     <>
+      <WaveBackground />
       <Header />
       <Hero />
       <LogoStrip />

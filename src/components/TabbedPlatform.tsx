@@ -106,7 +106,7 @@ export default function TabbedPlatform() {
   return (
     <section
       ref={ref}
-      className="bg-gray-950 py-20 lg:py-28 text-white overflow-hidden"
+      className="bg-gray-950/95 py-20 lg:py-28 text-white overflow-hidden"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >

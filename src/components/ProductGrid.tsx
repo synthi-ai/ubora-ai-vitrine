@@ -103,7 +103,7 @@ export default function ProductGrid() {
   const current = solutions[active];
 
   return (
-    <section ref={ref} className="bg-[#0a0a0a] py-16 lg:py-24 text-white overflow-hidden">
+    <section ref={ref} className="bg-[#0a0a0a]/95 py-16 lg:py-24 text-white overflow-hidden">
       {/* -------- Heading with decorative lines -------- */}
       <motion.div
         className="flex items-center justify-center gap-6 mb-16 lg:mb-24 px-4"

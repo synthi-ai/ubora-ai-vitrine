@@ -20,7 +20,7 @@ export default function LogoStrip() {
   const isInView = useInView(ref, { once: true, amount: 0.5 });
 
   return (
-    <section ref={ref} className="bg-white py-10 lg:py-14 overflow-hidden">
+    <section ref={ref} className="relative bg-white py-10 lg:py-14 overflow-hidden">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <motion.p
           className="text-center text-sm font-medium text-gray-400 uppercase tracking-wider mb-8"

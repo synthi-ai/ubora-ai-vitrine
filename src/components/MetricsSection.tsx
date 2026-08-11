@@ -17,7 +17,7 @@ export default function MetricsSection() {
   return (
     <section
       ref={ref}
-      className="bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 py-20 lg:py-28 text-white"
+      className="bg-gradient-to-br from-gray-950/95 via-gray-900/95 to-gray-950/95 py-20 lg:py-28 text-white"
     >
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-20 items-center">

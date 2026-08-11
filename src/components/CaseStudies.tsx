@@ -94,7 +94,7 @@ export default function CaseStudies() {
   const study = caseStudies[current];
 
   return (
-    <section ref={ref} className="bg-white py-20 lg:py-28">
+    <section ref={ref} className="bg-white/95 py-20 lg:py-28">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Heading */}
         <motion.div

@@ -8,7 +8,7 @@ export default function CTABanner() {
   const isInView = useInView(ref, { once: true, amount: 0.5 });
 
   return (
-    <section ref={ref} className="bg-gray-950 py-16 lg:py-20">
+    <section ref={ref} className="bg-gray-950/95 py-16 lg:py-20">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8"

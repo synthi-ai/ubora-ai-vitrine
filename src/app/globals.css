@@ -83,3 +83,26 @@
     font-family: 'Inter', sans-serif;
   }
 }
+
+/* ── GSAP Wave Background ── */
+@keyframes wave-drift-slow {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes wave-drift-mid {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes wave-drift-fast {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.animate-wave-drift-slow {
+  animation: wave-drift-slow 25s linear infinite;
+}
+.animate-wave-drift-mid {
+  animation: wave-drift-mid 18s linear infinite;
+}
+.animate-wave-drift-fast {
+  animation: wave-drift-fast 12s linear infinite;
+}
