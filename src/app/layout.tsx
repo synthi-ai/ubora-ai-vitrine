@@ -1,17 +1,19 @@
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import type { Metadata } from 'next';
 import './globals.css';
 
-export default function RootLayout({ children }) {
+export const metadata: Metadata = {
+  title: 'UboraAI - Intelligent Document Processing Platform',
+  description:
+    'Transform documents into actionable data with AI-powered intelligent document processing. Automate invoice processing, ID verification, contract analysis and more.',
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr">
+    <html lang="en">
       <body className="min-h-screen flex flex-col">
-        {/*<Header />*/}
-        <div className="pt-10"></div> 
         <main className="flex-grow">
           {children}
         </main>
-       {/*<Footer /> */}
       </body>
     </html>
   );

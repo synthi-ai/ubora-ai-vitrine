@@ -12,8 +12,7 @@ RUN yarn config set network-timeout 300000 && \
 COPY . .
 
 # Try to build, if it fails due to fonts, disable font optimization
-RUN yarn build || (echo "Build failed, retrying with font optimization disabled..." && \
-    NEXT_FONT_GOOGLE_MOCKED_RESPONSES='[]' yarn build)
+RUN yarn build 
 
 FROM node:21-alpine AS runner
 ENV NODE_ENV=production

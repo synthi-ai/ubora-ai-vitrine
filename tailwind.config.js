@@ -1,5 +1,4 @@
 /** @type {import('tailwindcss').Config} */
-const colors = require("tailwindcss/colors");
 module.exports = {
     darkMode: ["class"],
     content: [
@@ -19,6 +18,11 @@ module.exports = {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		colors: {
+  			ubora: {
+  				green: '#8cd139',
+  				'green-dark': '#6ab526',
+  				'green-text': '#2d5016'
+  			},
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {
@@ -60,11 +64,6 @@ module.exports = {
   				'5': 'hsl(var(--chart-5))'
   			}
   		}
-  	},
-  	colors: {
-            ...colors,
-  		primary: 'colors.purple',
-  		secondary: 'colors.pink'
   	}
   },
   plugins: [require("tailwindcss-animate")],

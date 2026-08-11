@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -17,8 +17,6 @@
     --background-end-rgb: 0, 0, 0;
   }
 }
-
-
 
 @layer base {
   :root {
@@ -76,14 +74,35 @@
   }
 }
 
-
-
 @layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
   }
 }
 
+/* ── GSAP Wave Background ── */
+@keyframes wave-drift-slow {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes wave-drift-mid {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes wave-drift-fast {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.animate-wave-drift-slow {
+  animation: wave-drift-slow 25s linear infinite;
+}
+.animate-wave-drift-mid {
+  animation: wave-drift-mid 18s linear infinite;
+}
+.animate-wave-drift-fast {
+  animation: wave-drift-fast 12s linear infinite;
+}

@@ -1,17 +1,26 @@
 /** @type {import('next').NextConfig} */
 
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-    enabled: process.env.ANALYZE === 'true',
-  });
-  
-  const nextConfig = {
-    reactStrictMode: true, 
-    swcMinify: true, 
+const nextConfig = {
+  reactStrictMode: true,
 
-     images: {
-       domains: ['wwww.synthi-ai.com'],
-     },
-     productionBrowserSourceMaps: false 
-  };
-  
-  module.exports = withBundleAnalyzer(nextConfig);
+  turbopack: {},
+
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'wwww.synthi-ai.com',
+        port: '',
+        pathname: '/**',
+      },
+    ],
+  },
+
+  productionBrowserSourceMaps: false,
+
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+};
+
+module.exports = nextConfig;

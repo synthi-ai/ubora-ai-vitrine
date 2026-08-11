@@ -1,34 +1,40 @@
-import Head from 'next/head';
-import Layout from '../components/Layout';
-import Hero from '../components/Hero';
-import AboutSection from '../components/AboutSection';
-import FeaturesSection from '../components/FeaturesSection';
-import UseCasesSection from '../components/UseCasesSection';
-import PricingSection from '../components/PricingSection';
-import TestimonialsSection from '../components/TestimonialsSection';
-import ChatWidget from '../components/ChatWidget';
-import Footer from '@/components/Footer';
+'use client';
+
 import Header from '@/components/Header';
-import Contact from '@/components/Contact';
+import dynamic from 'next/dynamic';
+import LogoStrip from '@/components/LogoStrip';
+import SplitFeatures from '@/components/SplitFeatures';
+import TabbedPlatform from '@/components/TabbedPlatform';
+import MetricsSection from '@/components/MetricsSection';
+import CaseStudies from '@/components/CaseStudies';
+import ProductGrid from '@/components/ProductGrid';
+import IndustriesTransformationSection from '@/components/IndustriesTransformationSection';
+import FAQSection from '@/components/FAQSection';
+import ResourcesGrid from '@/components/ResourcesGrid';
+import CTABanner from '@/components/CTABanner';
+import Footer from '@/components/Footer';
+import WaveBackground from '@/components/WaveBackground';
+
+// Hero uses react-type-animation which requires browser globals
+const Hero = dynamic(() => import('@/components/Hero'), { ssr: false });
 
 export default function Home() {
   return (
     <>
-      <Head>
-        <title>UboaAI - Transformez vos documents en données exploitables</title>
-        <meta name="description" content="Système de numérisation et d'extraction d'informations adapté à tous les secteurs" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <Header/>
+      <WaveBackground />
+      <Header />
       <Hero />
-      <AboutSection />
-      <FeaturesSection />
-      <UseCasesSection />
-      <PricingSection />
-      <TestimonialsSection />
-      <ChatWidget />
-      <Contact />
-      <Footer/>
-      </>  
+      <LogoStrip />
+      <SplitFeatures />
+      <TabbedPlatform />
+      <MetricsSection />
+      <CaseStudies />
+      <ProductGrid />
+      <IndustriesTransformationSection />
+      <FAQSection />
+      <ResourcesGrid />
+      <CTABanner />
+      <Footer />
+    </>
   );
 }
